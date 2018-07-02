@@ -79,7 +79,7 @@ switch ($data['message']['chat']['type'])
                         /**
                          * 若为其它类型，转化为PNG文件
                          */
-                        $send_message .= '[CQ:image,file=https://' . CONFIG['cloudimgage_token'] . '.cloudimg.io/width/' . $item['width'] . '/tpng/' . $photo_url . ']';
+                        $send_message .= '[CQ:image,file=https://' . CONFIG['cloudimgage_token'] . '.cloudimg.io/width/' . $item['width'] . '/tjpg/' . $photo_url . ']';
                     }
 
                     /**
