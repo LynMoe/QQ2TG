@@ -6,6 +6,9 @@
  * Time: 12:13 PM
  */
 
+/**
+ * 配置详细信息请查看README.MD
+ */
 define('CONFIG',[
     'ws_host' => '0.0.0.0',
     'ws_port' => 9501,

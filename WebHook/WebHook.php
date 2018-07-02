@@ -123,7 +123,7 @@ function curl($url)
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-    curl_setopt ($ch, CURLOPT_PROXY, CONFIG['HTTP_proxy']);
+    if (!empty(CONFIG['HTTP_proxy'])) curl_setopt ($ch, CURLOPT_PROXY, CONFIG['HTTP_proxy']);
     curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
     curl_setopt ($ch, CURLOPT_TIMEOUT, 5);
 
@@ -145,7 +145,7 @@ function curl($url)
     return $result;
 }
 
-log_it(json_encode($time));
+//log_it(json_encode($time));
 
 /**
  * 调试用
