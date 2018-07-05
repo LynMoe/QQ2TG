@@ -13,11 +13,16 @@ $start_time = microtime(true);
 $time[] = 0;
 
 require_once __DIR__ . '/../config/Config.php';
+require_once __DIR__ . '/../core/Storage.php';
 
 /**
  * 获取TG回调消息并填入日志
  */
 file_put_contents(__DIR__ . '/Logs/' . time() . '.json',json_encode($data = json_decode(file_get_contents("php://input"),true)));
+
+if (empty($data)) die;
+
+log_it(json_encode($data));
 
 /**
  * 判断消息为群组消息或私聊消息
@@ -79,7 +84,7 @@ switch ($data['message']['chat']['type'])
                         /**
                          * 若为其它类型，转化为PNG文件
                          */
-                        $send_message .= '[CQ:image,file=https://' . CONFIG['cloudimgage_token'] . '.cloudimg.io/width/' . $item['width'] . '/tpng/' . $photo_url . ']';
+                        $send_message .= '[CQ:image,file=https://' . CONFIG['cloudimage_token'] . '.cloudimg.io/width/' . $item['width'] . '/tjpg/' . $photo_url . ']';
                     }
 
                     /**
@@ -98,6 +103,11 @@ switch ($data['message']['chat']['type'])
          * 发送消息
          */
         file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message));
+
+        /**
+         * 保存消息
+         */
+        Storage::save_messages('3029196824',$qq_group,json_encode($send_message),time());
 
         /**
          * 性能检测
@@ -123,9 +133,9 @@ function curl($url)
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-    if (!empty(CONFIG['HTTP_proxy'])) curl_setopt ($ch, CURLOPT_PROXY, CONFIG['HTTP_proxy']);
+    if (!empty(CONFIG['HTTP_proxy_host'])) curl_setopt ($ch, CURLOPT_PROXY, CONFIG['HTTP_proxy_host'] . ':' . CONFIG['HTTP_proxy_port']);
     curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
-    curl_setopt ($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt ($ch, CURLOPT_TIMEOUT, CONFIG['http_timeout']);
 
     $headers = array();
     $headers[] = "Connection: keep-alive";
@@ -145,7 +155,7 @@ function curl($url)
     return $result;
 }
 
-//log_it(json_encode($time));
+log_it(json_encode($time));
 
 /**
  * 调试用

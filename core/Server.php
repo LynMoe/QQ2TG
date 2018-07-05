@@ -7,11 +7,19 @@
  */
 
 require_once __DIR__ . '/Event.php';
+require_once __DIR__ . '/Storage.php';
 
 class Server
 {
     public function start()
     {
+        /**
+         * 创建必要的MySQL表
+         */
+        $db = new \Buki\Pdox(CONFIG['database']);
+        $db->query("CREATE TABLE if not exists `image_file_id` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `qq_img_id` text, `qq_img_url` text, `tg_file_id` text, `time` int(11) DEFAULT NULL);");
+        $db->query("CREATE TABLE if not exists `user_info` (`id` int(11) PRIMARY KEY AUTO_INCREMENT,`user_id` bigint(20) NOT NULL,`qq_group_id` bigint(20) NOT NULL,`card` text,`flush_time` int(11) NOT NULL);");
+
         /**
          * 新建WS服务器
          */
@@ -30,13 +38,14 @@ class Server
         $server->on('Message', function (swoole_websocket_server $server, $frame) {
             echo '--------' . $frame->fd . '--------' . "\n";
             echo "原始数据: \n";
-            var_dump(json_decode($frame->data,true)); //原始数据
+            var_dump($data = json_decode($frame->data,true)); //原始数据
             echo "\n";
+
             /**
-             * 处理消息内容
+             * 发往 /core/Event.php handler 分析消息类型
              */
-            Event::handler(json_decode($frame->data,true));
-            echo "\n\n";
+            Event::handler($data);
+            echo "\n";
         });
 
         /**
@@ -47,7 +56,7 @@ class Server
         });
 
         /**
-         * 启动W服务器
+         * 启动WS服务器
          */
         $server->start();
     }

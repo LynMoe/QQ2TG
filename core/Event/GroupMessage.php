@@ -36,21 +36,33 @@ class GroupMessage
              */
             switch (str_replace('[CQ:','',$temp[0]))
             {
+                /**
+                 * 若要添加CQ码支持在此添加
+                 */
                 case 'image':
                     $code[] = [
                         'type' => 'image',
+                        /**
+                         * raw 为QQ图片 URL
+                         */
                         'raw' => str_replace('url=','',str_replace(']','',$temp[2])),
                     ];
                     break;
                 case 'at':
                     $code[] = [
                         'type' => 'at',
+                        /**
+                         * raw 为被 at 用户的QQ号码
+                         */
                         'raw' => str_replace('qq=','',str_replace(']','',$temp[1])),
                     ];
                     break;
                 case 'share':
                     $code[] = [
                         'type' => 'share',
+                        /**
+                         * raw 为分享的详细信息
+                         */
                         'raw' => [
                             'title' => str_replace('title=','',$temp[3]),
                             'content' => str_replace('content=','',$temp[1]),
@@ -69,11 +81,16 @@ class GroupMessage
         var_dump($code);
 
         /**
-         * 拼接消息
+         * 拼接文字消息
          */
         self::splice($data,$code);
     }
 
+    /**
+     * 发送前拼接文字消息
+     * @param $data
+     * @param $code
+     */
     private static function splice($data,$code)
     {
         $header = '';
@@ -88,19 +105,16 @@ class GroupMessage
             switch ($v['type'])
             {
                 case 'at':
-                    $card = json_decode(self::curl("http://192.168.31.110:5700/get_group_member_info?group_id={$data['group_id']}&user_id={$v['raw']}"),true)['data'];
                     /**
                      * 获取被@人群名片
                      */
-                    if ($card['card'] == '')
-                    {
-                        $card = $card['nickname'];
-                    } else {
-                        $card = $card['card'];
-                    }
+                    $card = Storage::get_card($v['raw'],$data['group_id']);
                     $header .= "[@{$card}]";
                     break;
                 case 'image':
+                    /**
+                     * 格式化为 Telegram Bot API 支持的格式
+                     */
                     $param['image'][] = [
                         'type' => 'photo',
                         'media' => $v['raw'],
@@ -114,20 +128,9 @@ class GroupMessage
         }
 
         /**
-         * 获取发送人群名片
-         */
-        $card = json_decode(self::curl("http://192.168.31.110:5700/get_group_member_info?group_id={$data['group_id']}&user_id={$data['user_id']}"),true)['data'];
-        if ($card['card'] == '')
-        {
-            $card = $card['nickname'];
-        } else {
-            $card = $card['card'];
-        }
-
-        /**
          * 拼接用户名、CQ码以及消息正文
          */
-        $message = '<b> ' . $card . " </b>:" . $header . "\n" . $data['message'];
+        $message = '<b> ' . Storage::get_card($data['user_id'],$data['group_id']) . " </b>:" . $header . "\n" . $data['message'];
 
         foreach ($param['image'] as $key => $value)
         {
@@ -143,38 +146,8 @@ class GroupMessage
         echo "\n";
 
         /**
-         * 拼接图片至消息中
+         * 拼接文字消息与图片(若存在)
          */
         Message::splice($param,$data);
-    }
-
-    private static function curl($url)
-    {
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-
-        curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
-        curl_setopt($ch,CURLOPT_TIMEOUT,3);
-
-        $headers = array();
-        $headers[] = "Connection: keep-alive";
-        $headers[] = "Pragma: no-cache";
-        $headers[] = "Cache-Control: no-cache";
-        $headers[] = "Upgrade-Insecure-Requests: 1";
-        $headers[] = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36";
-        $headers[] = "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
-        $headers[] = "Accept-Encoding: gzip, deflate, br";
-        $headers[] = "Accept-Language: zh-CN,zh;q=0.9,en;q=0.8";
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $result = curl_exec($ch);
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }
-        curl_close ($ch);
-        return $result;
     }
 }

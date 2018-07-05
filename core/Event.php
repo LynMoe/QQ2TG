@@ -18,7 +18,19 @@ class Event
                 {
                     if ($key == $data['group_id'])
                     {
+                        /**
+                         * 保存消息内容至数据库
+                         */
+                        Storage::save_message($data['user_id'],$data['group_id'],$data['message'],$data['time']);
+
+                        /**
+                         * 发送至 /Event/GroupMessage.php handler 处理内容
+                         */
                         GroupMessage::handler($data);
+
+                        /**
+                         * 跳出 if 与 switch
+                         */
                         continue 2;
                     }
                 }
