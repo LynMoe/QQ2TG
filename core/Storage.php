@@ -79,20 +79,24 @@ class Storage
      * 保存消息
      * @param $user_id
      * @param $qq_group_id
+     * @param $qq_message_id
+     * @param $tg_group_id
      * @param $message
      * @param $time
      * @return bool
      */
-    public static function save_message($user_id,$qq_group_id,$message,$time)
+    public static function save_message($user_id,$qq_group_id,$qq_message_id,$tg_group_id,$message,$time)
     {
         if (!CONFIG['save_messages']) return null;
 
         date_default_timezone_set('Asia/Shanghai');
         $db = new \Buki\Pdox(CONFIG['database']);
-        $db->query("CREATE TABLE if not exists messages_" . date('Ymd') . "(id int PRIMARY KEY AUTO_INCREMENT,user_id BIGINT,qq_group_id BIGINT,message longtext,time int NOT NULL);");
+        $db->query("CREATE TABLE if not exists messages_" . date('Ymd') . "(id int PRIMARY KEY AUTO_INCREMENT,user_id BIGINT,message longtext,qq_group_id BIGINT,qq_message_id int,tg_group_id bigint,tg_message_id int,time int NOT NULL);");
         $db->table('messages_' . date('Ymd'))->insert([
             'user_id' => $user_id,
             'qq_group_id' => $qq_group_id,
+            'qq_message_id' => $qq_message_id,
+            'tg_group_id' => $tg_group_id,
             'message' => json_encode($message),
             'time' => $time,
         ]);
@@ -137,5 +141,32 @@ class Storage
         } else {
             return json_decode($result->tg_file_id,true);
         }
+    }
+
+    /**
+     * 将 Telegram Message ID 与 QQ Message ID 对应
+     * @param $qq_message_id
+     * @param $tg_group_id
+     * @param $tg_message_id
+     */
+    public static function bind_message($qq_message_id,$tg_group_id,$tg_message_id)
+    {
+        date_default_timezone_set('Asia/Shanghai');
+        $db = new \Buki\Pdox(CONFIG['database']);
+        $db->table('messages_' . date('Ymd'))->where('qq_message_id',$qq_message_id)->where('tg_group_id',$tg_group_id)->update([
+            'tg_message_id' => $tg_message_id,
+        ]);
+    }
+
+    /**
+     * 获取 Telegram Message ID 对应的 QQ Message ID
+     * @param $tg_message_id
+     * @return int
+     */
+    public static function get_qq_message_id($tg_message_id)
+    {
+        date_default_timezone_set('Asia/Shanghai');
+        $db = new \Buki\Pdox(CONFIG['database']);
+        return $db->table('messages_' . date('Ymd'))->where('tg_message_id',$tg_message_id)->select('qq_message_id')->get()->qq_message_id;
     }
 }

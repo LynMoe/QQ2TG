@@ -21,7 +21,7 @@ class Event
                         /**
                          * 保存消息内容至数据库
                          */
-                        Storage::save_message($data['user_id'],$data['group_id'],$data['message'],$data['time']);
+                        Storage::save_message($data['user_id'],$data['group_id'],$data['message_id'],$value['chat_id'],$data['message'],$data['time']);
 
                         /**
                          * 发送至 /Event/GroupMessage.php handler 处理内容

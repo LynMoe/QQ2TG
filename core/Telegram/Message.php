@@ -48,6 +48,7 @@ class Message
                 self::curl([
                     'api' => 'sendPhoto',
                     'data' => $message,
+                    'qq_message_id' => $data['message_id'],
                 ]);
             } else {
                 /**
@@ -76,6 +77,7 @@ class Message
                 self::curl([
                     'api' => 'sendMediaGroup',
                     'data' => $message,
+                    'qq_message_id' => $data['message_id'],
                 ]);
             }
         } else {
@@ -90,6 +92,7 @@ class Message
                     'parse_mode' => 'HTML',
                     'disable_web_page_preview' => false,
                 ],
+                'qq_message_id' => $data['message_id'],
             ]);
         }
     }
@@ -158,7 +161,17 @@ class Message
          */
         $cli->get($url, function ($cli) use ($data) {
             echo "异步返回消息: \n" .  $cli->body . "\n";
+            if (!isset(json_decode($cli->body,true)['result'])) return;
             $result = json_decode($cli->body,true)['result'];
+            if (count($result) == 0) return null;
+
+            /**
+             * 将Telegram消息ID与数据绑定
+             */
+            $data['data']['chat_id'];
+            if (!isset($result['message_id'])) $result['message_id'] = $result[0]['message_id'];
+            Storage::bind_message($data['qq_message_id'],$data['data']['chat_id'],$result['message_id']);
+
 
             /**
              * 若有新图片则缓存 Telegram File ID

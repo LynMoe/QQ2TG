@@ -109,7 +109,7 @@ class GroupMessage
                      * 获取被@人群名片
                      */
                     $card = Storage::get_card($v['raw'],$data['group_id']);
-                    $header .= "[@{$card}]";
+                    $header .= "[@<a href=\"http://wpa.qq.com/msgrd?uin={$v['raw']}\">{$card}</a>]";
                     break;
                 case 'image':
                     /**
@@ -130,7 +130,25 @@ class GroupMessage
         /**
          * 拼接用户名、CQ码以及消息正文
          */
-        $message = '<b> ' . Storage::get_card($data['user_id'],$data['group_id']) . " </b>:" . $header . "\n" . $data['message'];
+        if (!empty(($header)))
+        {
+            if (!empty($data['message']))
+            {
+                $header = ": \n" . $header . "\n";
+            } else {
+                $header = ": \n" . $header;
+            }
+        } else {
+            if (!empty($data['message']))
+            {
+                $header = ": \n";
+            } else {
+                $header = '';
+                $data['message'] = '';
+            }
+        }
+
+        $message = '<i> ' . Storage::get_card($data['user_id'],$data['group_id']) . " </i>[<a href=\"http://wpa.qq.com/msgrd?uin={$data['user_id']}\">{$data['user_id']}</a>]" . $header . $data['message'];
 
         foreach ($param['image'] as $key => $value)
         {
