@@ -41,7 +41,7 @@ class Storage
             /**
              * 检测群名片是否过期
              */
-            if ($data->flush_time - time() > 3600*6)
+            if ((time() - $data->flush_time) > 3600*6)
             {
                 $db->table('user_info')->where('user_id',$user_id)->where('qq_group_id',$qq_group_id)->update([
                     'card' => json_encode($card = self::get_new_card($user_id,$qq_group_id)),
