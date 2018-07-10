@@ -65,7 +65,7 @@ class Storage
      */
     private static function get_new_card($user_id,$qq_group_id)
     {
-        $card = json_decode(file_get_contents("http://" . CONFIG['CQ_HTTP_url'] . "/get_group_member_info?group_id={$qq_group_id}&user_id={$user_id}"),true)['data'];
+        $card = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . "/get_group_member_info?group_id={$qq_group_id}&user_id={$user_id}"),true)['data'];
         if ($card['card'] == '')
         {
             $card = $card['nickname'];
