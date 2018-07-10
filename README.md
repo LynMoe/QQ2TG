@@ -14,6 +14,10 @@
 
 目前还不是十分完善，可能存在消息转发不及时、各种报错，还请各位dalao指点一二
 
+```
+联系了一下 coolq-http-api 插件的作者, 得知酷Q现在还不支持消息回复功能, 所以这个项目的私聊消息支持和群组消息回复的功能应该会无限期延长, 望谅解
+```
+
 ## Feature
 - 使用 `Swoole` 的异步 HTTP Client 请求 Telegram Bot API 服务器
 - 将QQ图片缓存为 Telegram File ID , 提高效率
