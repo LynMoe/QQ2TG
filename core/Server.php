@@ -38,6 +38,7 @@ class Server
          * [Main]客户端发送消息时
          */
         $server->on('Message', function (swoole_websocket_server $server, $frame) use($int) {
+            global $int;
             if ($int += $int >= CONFIG['restart_count']) exit("\n\n计数 " . $int . " , 结束进程\n\n");
             echo "\n" . $int . "\n";
             echo '--------' . $frame->fd . '--------' . "\n";
