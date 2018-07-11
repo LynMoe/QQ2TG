@@ -74,8 +74,8 @@ class GroupMessage
             }
         }
 
-        echo "去除CQ码后的消息: \n";
-        var_dump($data);
+        /*echo "去除CQ码后的消息: \n";
+        var_dump($data);*/
 
         echo "CQ码列表: \n";
         var_dump($code);
@@ -158,9 +158,9 @@ class GroupMessage
             break;
         }
 
-        echo "消息内容:\n";
+        /*echo "消息内容:\n";
         var_dump($data['message'] = $message);
-        echo "\n";
+        echo "\n";*/
 
         /**
          * 拼接文字消息与图片(若存在)

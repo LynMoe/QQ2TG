@@ -36,22 +36,27 @@ class Storage
                 'card' => json_encode($card = self::get_new_card($user_id,$qq_group_id)),
                 'flush_time' => time(),
             ]);
+            echo "[{$user_id}]新用户, 名片: {$card}";
             return $card;
         } else {
             /**
              * 检测群名片是否过期
              */
-            if ((time() - $data->flush_time) > 3600*6)
+            if ((time() - (int)$data->flush_time) > 3600*6)
             {
+                flush:
                 $db->table('user_info')->where('user_id',$user_id)->where('qq_group_id',$qq_group_id)->update([
                     'card' => json_encode($card = self::get_new_card($user_id,$qq_group_id)),
                     'flush_time' => time(),
                 ]);
+                echo "[{$user_id}]已过期, 新名片: {$card}";
                 return $card;
             } else {
                 /**
                  * 直接返回群名片
                  */
+                if ($data->card == null) goto flush;
+                echo "[{$user_id}]未过期, 名片: {$data->card}";
                 return json_decode($data->card,true);
             }
         }
@@ -65,13 +70,17 @@ class Storage
      */
     private static function get_new_card($user_id,$qq_group_id)
     {
-        $card = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . "/get_group_member_info?group_id={$qq_group_id}&user_id={$user_id}"),true)['data'];
-        if ($card['card'] == '')
-        {
-            $card = $card['nickname'];
-        } else {
-            $card = $card['card'];
-        }
+        $data = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . "/get_group_member_info?group_id={$qq_group_id}&user_id={$user_id}"),true)['data'];
+        $retry = 0;
+        do {
+            $retry += 1;
+            if ($data['card'] == '')
+            {
+                $card = $data['nickname'];
+            } else {
+                $card = $data['card'];
+            }
+        } while (!isset($data['nickname']) && $retry <= 3);
         return $card;
     }
 
