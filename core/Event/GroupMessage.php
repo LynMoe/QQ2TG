@@ -161,6 +161,7 @@ class GroupMessage
         /*echo "消息内容:\n";
         var_dump($data['message'] = $message);
         echo "\n";*/
+        $data['message'] = $message;
 
         /**
          * 拼接文字消息与图片(若存在)
