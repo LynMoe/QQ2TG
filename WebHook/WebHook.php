@@ -16,9 +16,9 @@ require_once __DIR__ . '/../config/Config.php';
 require_once __DIR__ . '/../core/Storage.php';
 
 /**
- * 获取TG回调消息并填入日志
+ * 获取TG回调消息
  */
-file_put_contents(__DIR__ . '/Logs/' . time() . '.json',json_encode($data = json_decode(file_get_contents("php://input"),true)));
+$data = json_decode(file_get_contents("php://input"),true);
 
 if (empty($data)) die;
 
@@ -115,12 +115,12 @@ switch ($data['message']['chat']['type'])
         /**
          * 获取要回复的消息
          */
-        if (isset($data['message']['reply_to_message'])) $param = '&reply_to_message_id=' . Storage::get_qq_message_id($data['message']['reply_to_message']['message_id']);
+        //if (isset($data['message']['reply_to_message'])) $param = '&reply_to_message_id=' . Storage::get_qq_message_id($data['message']['reply_to_message']['message_id']);
 
         /**
          * 发送消息
          */
-        file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg_async?group_id=' . $qq_group . '&message=' . urlencode($send_message));
+        file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message));
 
         /**
          * 保存消息
