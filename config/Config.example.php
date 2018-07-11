@@ -68,5 +68,15 @@ define('CONFIG',[
      * 请求 Telegram API 服务器超时设置(单位s)
      */
     'http_timeout' => 10.0,
+
+    /**
+     * 用于加速 QQ 图片海外访问的 CDN (推荐CloudFlare)
+     */
+    'image_proxy' => 'http://qq_static_resource.illl.li',
+
+    /**
+     * 重启计数器
+     */
+    'restart_count' => 500,
 ]);
 

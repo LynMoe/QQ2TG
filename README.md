@@ -34,8 +34,11 @@
     - `admin_id` :  `Int` Telegram 管理员的 `chat_id`, 目前用于发送性能调试数据
     - `group_settings` :  `Array` 配置QQ群组与Telegram群组的对应关系, 请按照示例添加
     - `database` :  `Array` MySQL数据库基本信息(后续可能会支持更多数据库)
-    - `HTTP_proxy_host/port` :  `String/Int` HTTP代理, 用于请求Telegram服务器
+    - `HTTP_proxy_host/port` :  `String/Int` HTTP代理, 用于请求Telegram服务器(不需要请留空host)
     - `save_messages` : `Boolean` 是否保存群消息(可能会占用大量内存)
+    - `http_timeout` :  `Int` 请求超时时间(秒)
+    - `image_proxy` :  `String` QQ 图片服务器海外CDN (推荐CloudFlare)
+    - `restart_count` :  `Int` 到达数目后退出进程, 若未设置进程守护请设置为无穷大(999999999999)
 3. 安装酷Q(若要发送图片则要求安装Pro版本)以及[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件，并添加配置以下参数:
     - use_ws_reverse :  使用反向 WebSocket 通讯
     - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`ws_host`/`ws_port`
@@ -54,8 +57,23 @@
 6. 进入目录, 输入```composer update```
 7. 输入```php run.php```
 8. 在网站环境中设置 `/WebHook` 为运行目录
-8. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/WebHook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
-9. enjoy it
+9. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/WebHook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
+10. 配置进程守护程序(**必须**):
+    - Systemd
+        ```
+        [Unit]
+        Description=QQ2TG
+        Documentation=https://github.com/XiaoLin0815/QQ2TG
+        After=network.target
+        
+        [Service]
+        ExecStart=/path/to/your/php /your/code/QQ2TG/run.php
+        Restart=always
+        
+        [Install]
+        WantedBy=multi-user.target
+        ```
+11. enjoy it
 
 ## 问题
 现在可能会出现消息**错乱**等情况，应该会在以后的版本中进行修正

@@ -52,7 +52,7 @@ switch ($data['message']['chat']['type'])
         if (isset($data['message']['photo'])) $message[] = ['type' => 'photo','file_id' => $data['message']['photo'][count($data['message']['photo']) - 1]['file_id'],];
         if (isset($data['message']['caption'])) $message[] = ['type' => 'text','content' => $data['message']['caption'],];
         if (isset($data['message']['text'])) $message[] = ['type' => 'text','content' => $data['message']['text'],];
-        if (isset($data['message']['sticker'])) $message[] = ['type' => 'photo','file_id' => $data['message']['sticker']['file_id'],'width' => $data['message']['sticker']['width']];
+        if (isset($data['message']['sticker'])) $message[] = ['type' => 'photo','file_id' => $data['message']['sticker']['file_id'],'width' => $data['message']['sticker']['width'],];
 
         /**
          * 性能检测
@@ -100,14 +100,19 @@ switch ($data['message']['chat']['type'])
         }
 
         /**
+         * 获取要回复的消息
+         */
+        if (isset($data['message']['reply_to_message'])) $param = '&reply_to_message_id=' . Storage::get_qq_message_id($data['message']['reply_to_message']['message_id']);
+
+        /**
          * 发送消息
          */
-        file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message));
+        file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg_async?group_id=' . $qq_group . '&message=' . urlencode($send_message));
 
         /**
          * 保存消息
          */
-        Storage::save_messages('3029196824',$qq_group,json_encode($send_message),time());
+        //Storage::save_messages('3029196824',$qq_group,json_encode($send_message),time());
 
         /**
          * 性能检测
@@ -122,6 +127,7 @@ switch ($data['message']['chat']['type'])
 }
 
 /**
+ * 调试用
  * 请求TG-API (使用代理)
  * @param $url
  * @return mixed

@@ -117,13 +117,12 @@ class GroupMessage
                      */
                     $param['image'][] = [
                         'type' => 'photo',
-                        'media' => $v['raw'],
+                        'media' => $url = str_replace('https://gchat.qpic.cn',CONFIG['image_proxy'],$v['raw']),
                     ];
                     break;
                 case 'share':
-                    $header .= "[分享]<a href='{$v['raw']['url']}'>{$v['raw']['title']}</a>\n{$v['raw']['content']}\n<a href='{$v['raw']['image']}'>Image</a>\n<a href='{$v['raw']['url']}'>Link</a>";
+                    $header .= "[分享]<a href='{$v['raw']['url']}'>{$v['raw']['title']}</a>\n{$v['raw']['content']}\n<a href='{$v['raw']['image']}'>Media</a>\n<a href='{$v['raw']['url']}'>链接</a>";
                     break;
-
             }
         }
 

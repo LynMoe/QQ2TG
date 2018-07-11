@@ -13,6 +13,8 @@ class Server
 {
     public function start()
     {
+        $int = 0;
+
         /**
          * 创建必要的MySQL表
          */
@@ -35,7 +37,9 @@ class Server
         /**
          * [Main]客户端发送消息时
          */
-        $server->on('Message', function (swoole_websocket_server $server, $frame) {
+        $server->on('Message', function (swoole_websocket_server $server, $frame) use($int) {
+            if ($int += $int >= CONFIG['restart_count']) exit("\n\n计数 " . $int . " , 结束进程\n\n");
+            echo "\n" . $int . "\n";
             echo '--------' . $frame->fd . '--------' . "\n";
             echo "原始数据: \n";
             var_dump($data = json_decode($frame->data,true)); //原始数据
