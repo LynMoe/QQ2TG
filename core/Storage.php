@@ -56,7 +56,7 @@ class Storage
                  * 直接返回群名片
                  */
                 if ($data->card == null) goto flush;
-                echo "[{$user_id}]未过期, 名片: {$data->card}";
+                echo "[{$user_id}]未过期, 名片: " . json_decode($data->card,true);
                 return json_decode($data->card,true);
             }
         }
