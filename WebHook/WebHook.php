@@ -44,7 +44,7 @@ switch ($data['message']['chat']['type'])
         {
             if ($value['chat_id'] === $chat_id) $qq_group = $key;
         }
-        if ($qq_group === 0) die();
+        if ($qq_group === 0) die;
 
         /**
          * 将消息类型与内容转换为数组
@@ -53,6 +53,7 @@ switch ($data['message']['chat']['type'])
         if (isset($data['message']['caption'])) $message[] = ['type' => 'text','content' => $data['message']['caption'],];
         if (isset($data['message']['text'])) $message[] = ['type' => 'text','content' => $data['message']['text'],];
         if (isset($data['message']['sticker'])) $message[] = ['type' => 'photo','file_id' => $data['message']['sticker']['file_id'],'width' => $data['message']['sticker']['width'],];
+        if (isset($data['message']['reply_to_message'])) $message[] = ['type' => 'reply','message_id' => $data['message']['reply_to_message']['message_id'],'tg_group_id' => $data['message']['reply_to_message']['chat']['id'],];
 
         /**
          * 性能检测
@@ -95,6 +96,18 @@ switch ($data['message']['chat']['type'])
                     break;
                 case 'text':
                     $send_message .= $item['content'];
+                    break;
+                case 'reply':
+                    $result = Storage::get_message_content($item['tg_group_id'],$item['message_id']);
+
+                    preg_match_all("/\[CQ(.*?)\]/",$result['message'],$cq_code);
+                    $cq_code = $cq_code[0];
+                    foreach ($cq_code as $value)
+                    {
+                        $result['message'] = str_replace($value,'[某格式]',$result['message']);
+                    }
+
+                    $send_message = "[回复给" . Storage::get_card($result['user_id'],$qq_group) . ": " . substr($result['message'],0,20) . "]\n" . $send_message;
                     break;
             }
         }

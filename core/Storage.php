@@ -178,4 +178,35 @@ class Storage
         $db = new \Buki\Pdox(CONFIG['database']);
         return $db->table('messages_' . date('Ymd'))->where('tg_message_id',$tg_message_id)->select('qq_message_id')->get()->qq_message_id;
     }
+
+    /**
+     * 获取 Telegram Message ID 对应的 QQ Message
+     * @param $tg_chat_id
+     * @param $tg_message_id
+     * @return array
+     */
+    public static function get_message_content($tg_chat_id,$tg_message_id)
+    {
+        date_default_timezone_set('Asia/Shanghai');
+        $db = new \Buki\Pdox(CONFIG['database']);
+        $data = $db->table('messages_' . date('Ymd'))->where('tg_group_id',$tg_chat_id)->where('tg_message_id',$tg_message_id)->get();
+
+        if (is_object($data))
+        {
+            return [
+                'user_id' => $data->user_id,
+                'message' => json_decode($data->message,true),
+            ];
+        } elseif (is_object($data = $db->table('messages_' . date('Ymd',time() - 3600*24))->where('tg_group_id',$tg_chat_id)->where('tg_message_id',$tg_message_id)->get())) {
+            return [
+                'user_id' => $data->user_id,
+                'message' => json_decode($data->message,true),
+            ];
+        } else {
+            return [
+                'user_id' => '10000',
+                'message' => 'Empty',
+            ];
+        }
+    }
 }
