@@ -49,7 +49,7 @@ class Storage
                     'card' => json_encode($card = self::get_new_card($user_id,$qq_group_id)),
                     'flush_time' => time(),
                 ]);
-                echo "[{$user_id}]已过期, 新名片: {$card}";
+                echo "[{$user_id}]已过期, 原名片: {$data->card} , 新名片: {$card}";
                 return $card;
             } else {
                 /**
