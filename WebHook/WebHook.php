@@ -101,9 +101,27 @@ switch ($data['message']['chat']['type'])
 
                     preg_match_all("/\[CQ(.*?)\]/",$result['message'],$cq_code);
                     $cq_code = $cq_code[0];
+
                     foreach ($cq_code as $value)
                     {
-                        $result['message'] = str_replace($value,'[某格式]',$result['message']);
+                        $temp = explode(',',$value);
+                        $data['message'] = str_replace($value,'',$data['message']) . ' ';
+                        switch (str_replace('[CQ:','',$temp[0]))
+                        {
+                            case 'image':
+                                $type = '图片';
+                                break;
+                            case 'at':
+                                $type = '@' . Storage::get_card(str_replace('qq=','',str_replace(']','',$temp[1])),$qq_group);
+                                break;
+                            case 'share':
+                                $type = '分享消息';
+                                break;
+                            default:
+                                $type = '某卡片';
+                                break;
+                        }
+                        $result['message'] = str_replace($value,'[' . $type . ']',$result['message']);
                     }
 
                     $send_message = "[回复给" . Storage::get_card($result['user_id'],$qq_group) . ": " . mb_substr($result['message'],0,20,'UTF-8') . "]\n" . $send_message;
@@ -112,19 +130,9 @@ switch ($data['message']['chat']['type'])
         }
 
         /**
-         * 获取要回复的消息
-         */
-        //if (isset($data['message']['reply_to_message'])) $param = '&reply_to_message_id=' . Storage::get_qq_message_id($data['message']['reply_to_message']['message_id']);
-
-        /**
          * 发送消息
          */
         file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message));
-
-        /**
-         * 保存消息
-         */
-        //Storage::save_messages('3029196824',$qq_group,json_encode($send_message),time());
 
         /**
          * 性能检测
