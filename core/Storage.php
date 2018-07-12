@@ -36,22 +36,27 @@ class Storage
                 'card' => json_encode($card = self::get_new_card($user_id,$qq_group_id)),
                 'flush_time' => time(),
             ]);
+            echo "[{$user_id}]新用户, 名片: {$card}";
             return $card;
         } else {
             /**
              * 检测群名片是否过期
              */
-            if ((time() - $data->flush_time) > 3600*6)
+            if ((time() - (int)$data->flush_time) > 3600*6)
             {
+                flush:
                 $db->table('user_info')->where('user_id',$user_id)->where('qq_group_id',$qq_group_id)->update([
                     'card' => json_encode($card = self::get_new_card($user_id,$qq_group_id)),
                     'flush_time' => time(),
                 ]);
+                echo "[{$user_id}]已过期, 原名片: {$data->card} , 新名片: {$card}";
                 return $card;
             } else {
                 /**
                  * 直接返回群名片
                  */
+                if ($data->card == null) goto flush;
+                echo "[{$user_id}]未过期, 名片: " . json_decode($data->card,true);
                 return json_decode($data->card,true);
             }
         }
@@ -65,13 +70,17 @@ class Storage
      */
     private static function get_new_card($user_id,$qq_group_id)
     {
-        $card = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . "/get_group_member_info?group_id={$qq_group_id}&user_id={$user_id}"),true)['data'];
-        if ($card['card'] == '')
-        {
-            $card = $card['nickname'];
-        } else {
-            $card = $card['card'];
-        }
+        $data = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . "/get_group_member_info?group_id={$qq_group_id}&user_id={$user_id}"),true)['data'];
+        $retry = 0;
+        do {
+            $retry += 1;
+            if ($data['card'] == '')
+            {
+                $card = $data['nickname'];
+            } else {
+                $card = $data['card'];
+            }
+        } while (!isset($data['nickname']) && $retry <= 3);
         return $card;
     }
 
@@ -168,5 +177,36 @@ class Storage
         date_default_timezone_set('Asia/Shanghai');
         $db = new \Buki\Pdox(CONFIG['database']);
         return $db->table('messages_' . date('Ymd'))->where('tg_message_id',$tg_message_id)->select('qq_message_id')->get()->qq_message_id;
+    }
+
+    /**
+     * 获取 Telegram Message ID 对应的 QQ Message
+     * @param $tg_chat_id
+     * @param $tg_message_id
+     * @return array
+     */
+    public static function get_message_content($tg_chat_id,$tg_message_id)
+    {
+        date_default_timezone_set('Asia/Shanghai');
+        $db = new \Buki\Pdox(CONFIG['database']);
+        $data = $db->table('messages_' . date('Ymd'))->where('tg_group_id',$tg_chat_id)->where('tg_message_id',$tg_message_id)->get();
+
+        if (is_object($data))
+        {
+            return [
+                'user_id' => $data->user_id,
+                'message' => json_decode($data->message,true),
+            ];
+        } elseif (is_object($data = $db->table('messages_' . date('Ymd',time() - 3600*24))->where('tg_group_id',$tg_chat_id)->where('tg_message_id',$tg_message_id)->get())) {
+            return [
+                'user_id' => $data->user_id,
+                'message' => json_decode($data->message,true),
+            ];
+        } else {
+            return [
+                'user_id' => '10000',
+                'message' => 'Empty',
+            ];
+        }
     }
 }
