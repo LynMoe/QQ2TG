@@ -6,7 +6,7 @@
  * Time: 2:27 PM
  */
 
-require_once __DIR__ . '/../Telegram/Message.php';
+require_once __DIR__ . '/../Telegram/Group.php';
 
 class GroupMessage
 {
@@ -166,6 +166,6 @@ class GroupMessage
         /**
          * 拼接文字消息与图片(若存在)
          */
-        Message::splice($param,$data);
+        Group::splice($param,$data);
     }
 }

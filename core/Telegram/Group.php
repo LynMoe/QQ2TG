@@ -6,7 +6,7 @@
  * Time: 2:35 PM
  */
 
-class Message
+class Group
 {
     public static function splice($param,$data)
     {

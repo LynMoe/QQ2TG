@@ -10,6 +10,6 @@ class PersonalMessage
 {
     public static function handler($data)
     {
-
+        var_dump($data);
     }
 }
