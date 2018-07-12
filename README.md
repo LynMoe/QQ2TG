@@ -41,7 +41,6 @@
     - `group_settings` :  `Array` 配置QQ群组与Telegram群组的对应关系, 请按照示例添加
     - `database` :  `Array` MySQL数据库基本信息(后续可能会支持更多数据库)
     - `HTTP_proxy_host/port` :  `String/Int` HTTP代理, 用于请求Telegram服务器(不需要请留空host)
-    - `save_messages` : `Boolean` 是否保存群消息(可能会占用大量内存)
     - `http_timeout` :  `Int` 请求超时时间(秒)
     - `image_proxy` :  `String` QQ 图片服务器海外CDN (推荐CloudFlare)
     - `restart_count` :  `Int` 到达数目后退出进程, 若未设置进程守护请设置为无穷大(999999999999)
