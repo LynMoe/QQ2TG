@@ -15,19 +15,25 @@
 目前还不是十分完善，可能存在消息转发不及时、各种报错，还请各位dalao指点一二
 
 ```
-联系了一下 coolq-http-api 插件的作者, 得知酷Q现在还不支持消息回复功能, 所以这个项目的私聊消息支持和群组消息回复的功能应该会无限期延长, 望谅解
+联系了一下 coolq-http-api 插件的作者, 得知酷Q现在还不支持消息回复功能, 所以这个项目的原生群组消息回复的功能应该会无限期延长, 望谅解
 ```
 
 ## Feature
-- 使用 `Swoole` 的异步 HTTP Client 请求 Telegram Bot API 服务器
+- 使用 Swoole 的异步 HTTP Client 请求 Telegram Bot API 服务器
 - 将QQ图片缓存为 Telegram File ID , 提高效率
 - 拓展性较高, 可轻松支持一个新的 CQ 码或 Telegram 消息格式
+- 支持双向私聊消息(目前`只允许`QQ先发起对话)
+- 支持 QQ 自带的 Emoji
+- 采用世界上最好的语言编写  ((日常拉仇恨
+
 实在编不出来了...  /滑稽
 
 ## 使用
 1. 将代码拖到本地 :  ```git clone https://github.com/XiaoLin0815/QQ2TG.git```
+
 2. 将`config\Config.example.php`改名为`config\Config.php`并填写完整
     - `ws_host`/`ws_port` :  `String/Int` 本地`websocket`的主机和端口
+    
     - `CQ_HTTP_url` :  `String` 酷Q HTTP-API的HTTP服务器地址
     - `cloudimage_token` :  `String` 用于将`webp`格式的sicker转换为jpg的api token, 地址[在此](https://www.cloudimage.io)，一定限度内免费
     - `bot_token` :  `String` Telegram Bot API token, Telegram `@BotFather`获取
@@ -76,11 +82,15 @@
 11. enjoy it
 
 ## 问题
-现在可能会出现消息**错乱**等情况，应该会在以后的版本中进行修正
+若要在 Linux 上使用 酷Q , 可参考[这里](https://github.com/CoolQ/docker-wine-coolq)
 
-若要修改消息样式，可前往 `core\Event\GroupMessage.php` 自行修改
+私聊消息请求 Telegram Bot API 服务器的超时会默认在设定的 Timeout 上加上15秒, 但仍小几率情况出现无法获取 Telegram Message ID 的情况, 导致无法回复私聊消息, 目前尚未找到更好的方案解决  （(求PR 
 
-**有可能**会出现程序运行时意外退出，若出现请将控制台输出日志提交为Issue，如果不弃坑的话应该会帮助解答/修正的
+现在可能会出现消息**错乱**等情况(比如 QQ 在图片后的消息会在 TG 出现在图片前)，应该会在以后的版本中进行修正  ((仍然没思路, 求PR
+
+若要修改消息样式，可前往 `core\Event\(Private/Group)Message.php` 自行修改
+
+**有可能**会出现程序运行时意外退出，若出现请将错误日志提交为issue，如果不弃坑的话应该会帮助解答/修正的
 
 QQ中的表情包(不包括漫游表情等图片表情)暂未找到方法获取，若找到方法会添加的
 
@@ -88,17 +98,25 @@ QQ中的表情包(不包括漫游表情等图片表情)暂未找到方法获取�
 - ~~异步消息发送~~
 - ~~图片信息缓存~~
 - ~~用户群名片缓存~~
-- 支持私聊消息
+- ~~支持私聊消息~~
+- 解决文档中提到的问题
+  - 消息错乱
+  - 私聊消息 Timeout
+  - 从 Telegram 端发起私聊
 - 更多CQ码兼容
 
 dalao们如果有任何问题或者建议请在Issue中提出直接提交PR，感谢万分
 
 ## 题外话
-毕竟初中生, 就是头脑简单四肢发达, 思维一坨屎, 英语极差, 导致代码里很多奇怪或者重复的变量名, 还请多多包涵,
-有些地方代码质量不高、效率低下, 或者结构有问题的, 还请 dalao 们多多指点 
+毕竟初中生, 就是头脑简单四肢发达, 思维算法一坨屎, 英语极差, 导致代码里很多奇怪或者重复的变量名, 还请多多包涵,有些地方代码质量不高、效率低下, 或者结构有问题的, 还请 dalao 们多多指点 
 
 或许真的要像[LWL](https://lwl.moe)说的那样`变得更优秀`吧
 
 ## 更新日志
+2018/07/12 支持双向私聊消息
+
+2018/07/11 更新名片获取机制, 添加伪消息回复支持
+
 2018/07/05 添加图片信息缓存、消息异步发送、群名片缓存, 支持保存消息
+
 2018/07/02 第一版，支持QQ与Telegram消息双向互通，支持图片、sticker发送
