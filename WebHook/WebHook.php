@@ -105,7 +105,13 @@ switch ($data['message']['chat']['type'])
                     foreach ($cq_code as $value)
                     {
                         $temp = explode(',',$value);
-                        $data['message'] = str_replace($value,'',$data['message']) . ' ';
+                        if (str_replace('[CQ:','',$temp[0]) != 'face')
+                        {
+                            $data['message'] = str_replace($value,'',$data['message']) . ' ';
+                        } else {
+                            $temp[1] = str_replace(']','',str_replace('id=','',$temp[1]));
+                            $data['message'] = str_replace($value,Method::handle_emoji_cq_code($temp[1]),$data['message']) . ' ';
+                        }
                         switch (str_replace('[CQ:','',$temp[0]))
                         {
                             case 'image':

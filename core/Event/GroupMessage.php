@@ -7,6 +7,7 @@
  */
 
 require_once __DIR__ . '/../Telegram/Group.php';
+require_once __DIR__ . '/../Method.php';
 
 class GroupMessage
 {
@@ -28,8 +29,17 @@ class GroupMessage
              * 获取CQ码类型和参数
              */
             $temp = explode(',',$item);
-            //TODO::将表情替换为Emoji
-            if (str_replace('[CQ:','',$temp[0]) != 'face') $data['message'] = str_replace($item,'',$data['message']) . ' ';
+
+            /**
+             * 将表情CQ码替换为Emoji
+             */
+            if (str_replace('[CQ:','',$temp[0]) != 'face')
+            {
+                $data['message'] = str_replace($item,'',$data['message']) . ' ';
+            } else {
+                $temp[1] = str_replace(']','',str_replace('id=','',$temp[1]));
+                $data['message'] = str_replace($item,Method::handle_emoji_cq_code($temp[1]),$data['message']) . ' ';
+            }
 
             /**
              * 筛选信息
