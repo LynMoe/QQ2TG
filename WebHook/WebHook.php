@@ -149,6 +149,79 @@ switch ($data['message']['chat']['type'])
 
     case 'private': //TODO
 
+        /**
+         * 初始化参数
+         */
+        $message = [];
+
+        if (!isset($data['message']['reply_to_message']['message_id'])) die;
+        $tg_message_id = $data['message']['reply_to_message']['message_id'];
+        $qq_user_id = Storage::get_qq_user_id($tg_message_id);
+
+        /**
+         * 将消息类型与内容转换为数组
+         */
+        if (isset($data['message']['photo'])) $message[] = ['type' => 'photo','file_id' => $data['message']['photo'][count($data['message']['photo']) - 1]['file_id'],];
+        if (isset($data['message']['caption'])) $message[] = ['type' => 'text','content' => $data['message']['caption'],];
+        if (isset($data['message']['text'])) $message[] = ['type' => 'text','content' => $data['message']['text'],];
+        if (isset($data['message']['sticker'])) $message[] = ['type' => 'photo','file_id' => $data['message']['sticker']['file_id'],'width' => $data['message']['sticker']['width'],];
+
+
+        /**
+         * 性能检测
+         */
+        $time[] = microtime(true) - $start_time;
+
+        /**
+         * 拼接消息数组
+         */
+        $send_message = '';
+        foreach ($message as $item)
+        {
+            switch ($item['type'])
+            {
+                case 'photo':
+                    $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot_token'] . "/" . $file_name = json_decode(curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/getFile?file_id=" . $item['file_id']),true)['result']['file_path'];
+                    //file_put_contents(__DIR__ . '/Data/Photos/' . md5($photo_url) . '.jpg',$file_content = file_get_contents($photo_url)); //储存文件
+
+                    /**
+                     * 性能检测
+                     */
+                    $time[] = microtime(true) - $start_time;
+
+                    $tmp = explode('.',$file_name);
+                    if ($tmp[1] == 'jpg')
+                    {
+                        $send_message .= '[CQ:image,file=' . $photo_url . ']';
+                    } else {
+                        /**
+                         * 若为其它类型，转化为PNG文件
+                         */
+                        $send_message .= '[CQ:image,file=https://' . CONFIG['cloudimage_token'] . '.cloudimg.io/width/' . $item['width'] . '/tjpg/' . $photo_url . ']';
+                    }
+
+                    /**
+                     * 性能检测
+                     */
+                    $time[] = microtime(true) - $start_time;
+
+                    break;
+                case 'text':
+                    $send_message .= $item['content'];
+                    break;
+            }
+        }
+
+        /**
+         * 发送消息
+         */
+        file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_private_msg?user_id=' . $qq_user_id . '&message=' . urlencode($send_message));
+
+        /**
+         * 性能检测
+         */
+        $time[] = microtime(true) - $start_time;
+
         break;
 }
 
