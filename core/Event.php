@@ -3,7 +3,6 @@
 require_once __DIR__ . '/Event/PersonalMessage.php';
 require_once __DIR__ . '/Event/GroupMessage.php';
 
-
 class Event
 {
     public static function handler($data)
@@ -37,7 +36,10 @@ class Event
                 echo "未设定群组 {$data['group_id']} 对应的 Telegram 群组";
                 break;
             case 'private':
-                PersonalMessage::handler($data); //TODO
+
+                Storage::save_private_message($data['user_id'],$data['message_id'],$data['message'],$data['time']);
+
+                PersonalMessage::handler($data);
                 break;
         }
     }

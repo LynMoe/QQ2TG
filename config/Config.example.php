@@ -60,11 +60,6 @@ define('CONFIG',[
     'HTTP_proxy_port' => 0,
 
     /**
-     * 是否保存消息(可能会占用大量内存)
-     */
-    'save_messages' => false,
-
-    /**
      * 请求 Telegram API 服务器超时设置(单位s)
      */
     'http_timeout' => 10.0,

@@ -21,6 +21,7 @@ class Server
         $db = new \Buki\Pdox(CONFIG['database']);
         $db->query("CREATE TABLE if not exists `image_file_id` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `qq_img_id` text, `qq_img_url` text, `tg_file_id` text, `time` int(11) DEFAULT NULL);");
         $db->query("CREATE TABLE if not exists `user_info` (`id` int(11) PRIMARY KEY AUTO_INCREMENT,`user_id` bigint(20) NOT NULL,`qq_group_id` bigint(20) NOT NULL,`card` text,`flush_time` int(11) NOT NULL);");
+        unset($db);
 
         /**
          * 新建WS服务器

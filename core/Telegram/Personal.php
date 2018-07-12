@@ -2,11 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: XiaoLin
- * Date: 2018-06-29
- * Time: 2:35 PM
+ * Date: 2018-07-12
+ * Time: 1:26 PM
  */
 
-class Message
+class Personal
 {
     public static function splice($param,$data)
     {
@@ -34,7 +34,7 @@ class Message
                 $param['image']['media'] = Storage::get_file_id($qq_file_id,$param['image']['media']);
 
                 $message = [
-                    'chat_id' => CONFIG['group_settings'][$data['group_id']]['chat_id'],
+                    'chat_id' => CONFIG['admin_id'],
                     'media' => $param['image'],
                 ];
 
@@ -63,7 +63,7 @@ class Message
                 }
 
                 $message = [
-                    'chat_id' => CONFIG['group_settings'][$data['group_id']]['chat_id'],
+                    'chat_id' => CONFIG['admin_id'],
                     'media' => $param['image'],
                 ];
 
@@ -87,7 +87,7 @@ class Message
             self::curl([
                 'api' => 'sendMessage',
                 'data' => [
-                    'chat_id' => CONFIG['group_settings'][$data['group_id']]['chat_id'],
+                    'chat_id' => CONFIG['admin_id'],
                     'text' => $data['message'],
                     'parse_mode' => 'HTML',
                     'disable_web_page_preview' => false,
@@ -144,7 +144,7 @@ class Message
         /**
          * 设置代理
          */
-        if (!empty(CONFIG['HTTP_proxy_host'])) $cli->set(['timeout' => CONFIG['http_timeout'],'http_proxy_host' => CONFIG['HTTP_proxy_host'],'http_proxy_port' => CONFIG['HTTP_proxy_port'],]); $cli->set(['timeout' => CONFIG['http_timeout'],]);
+        if (!empty(CONFIG['HTTP_proxy_host'])) $cli->set(['timeout' => CONFIG['http_timeout'],'http_proxy_host' => CONFIG['HTTP_proxy_host'],'http_proxy_port' => CONFIG['HTTP_proxy_port'],]); $cli->set(['timeout' => CONFIG['http_timeout'] + 5,]);
 
         /**
          * 设置请求头
@@ -168,9 +168,8 @@ class Message
             /**
              * 将Telegram消息ID与数据绑定
              */
-            $data['data']['chat_id'];
             if (!isset($result['message_id'])) $result['message_id'] = $result[0]['message_id'];
-            Storage::bind_message($data['qq_message_id'],$data['data']['chat_id'],$result['message_id']);
+            Storage::bind_private_message($data['qq_message_id'],$result['message_id']);
 
 
             /**
@@ -178,21 +177,21 @@ class Message
              */
             if (isset($result['photo']))
             { //单张图片
-             $tg_file_id = $result['photo'][count($result['photo']) - 1]['file_id'];
-             $qq_file_url = $data['data']['media']['media'];
+                $tg_file_id = $result['photo'][count($result['photo']) - 1]['file_id'];
+                $qq_file_url = $data['data']['media']['media'];
 
                 /**
                  * 检测发送的地址类型
                  */
-             if (stripos($qq_file_url,'https') !== false)
-             {
-                 preg_match_all('/\-(.*)\/0/',$qq_file_url,$id);
-                 $qq_file_id = explode('-',$id[1][0])[1];
-                 /**
-                  * 添加缓存
-                  */
-                 Storage::save_image_id($qq_file_id,$qq_file_url,$tg_file_id);
-             }
+                if (stripos($qq_file_url,'http') !== false)
+                {
+                    preg_match_all('/\-(.*)\/0/',$qq_file_url,$id);
+                    $qq_file_id = explode('-',$id[1][0])[1];
+                    /**
+                     * 添加缓存
+                     */
+                    Storage::save_image_id($qq_file_id,$qq_file_url,$tg_file_id);
+                }
 
             } elseif (isset($result[0]['message_id']))
             { //多张图片
