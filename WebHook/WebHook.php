@@ -12,7 +12,6 @@
 $start_time = microtime(true);
 $time[] = 0;
 
-require_once __DIR__ . '/../config/Config.php';
 require_once __DIR__ . '/../core/Storage.php';
 
 /**
