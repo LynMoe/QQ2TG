@@ -21,7 +21,7 @@ $data = json_decode(file_get_contents("php://input"),true);
 
 if (empty($data)) die;
 
-log_it(json_encode($data));
+error_log('Receive Data: ' . json_encode($data));
 
 /**
  * 判断消息为群组消息或私聊消息
@@ -226,13 +226,13 @@ switch ($data['message']['chat']['type'])
 }
 
 /**
- * 调试用
- * 请求TG-API (使用代理)
+ * 请求TG-API
  * @param $url
  * @return mixed
  */
 function curl($url)
 {
+    error_log('Request Data: ' . $url);
     $ch = curl_init();
 
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -258,15 +258,4 @@ function curl($url)
     }
     curl_close ($ch);
     return $result;
-}
-
-log_it(json_encode($time));
-
-/**
- * 调试用
- * @param $message
- */
-function log_it($message)
-{
-    curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&text=" . urlencode($message));
 }

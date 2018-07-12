@@ -38,9 +38,12 @@ class Personal
                     'media' => $param['image'],
                 ];
 
-                echo "单张图片:\n";
+                /**
+                 * DEBUG
+                 */
+                /*echo "单张图片:\n";
                 var_dump($message);
-                echo "\n";
+                echo "\n";*/
 
                 /**
                  * 发送消息
@@ -67,9 +70,12 @@ class Personal
                     'media' => $param['image'],
                 ];
 
-                echo "多张图片:\n";
+                /**
+                 * DEBUG
+                 */
+                /*echo "多张图片:\n";
                 var_dump($param);
-                echo "\n";
+                echo "\n";*/
 
                 /**
                  * 发送消息
@@ -122,11 +128,18 @@ class Personal
              * 多张图片
              */
             case 'sendMediaGroup':
-                var_dump($data);
+                /**
+                 * DEBUG
+                 */
+                /*var_dump($data);*/
+
                 $url = $host . 'sendMediaGroup?chat_id=' . $data['data']['chat_id'] . '&media=' . urlencode(json_encode($data['data']['media']));
                 break;
         }
 
+        /**
+         * DEBUG
+         */
         /**
          * 请求地址
          */
@@ -144,7 +157,7 @@ class Personal
         /**
          * 设置代理
          */
-        if (!empty(CONFIG['HTTP_proxy_host'])) $cli->set(['timeout' => CONFIG['http_timeout'],'http_proxy_host' => CONFIG['HTTP_proxy_host'],'http_proxy_port' => CONFIG['HTTP_proxy_port'],]); $cli->set(['timeout' => CONFIG['http_timeout'] + 5,]);
+        if (!empty(CONFIG['HTTP_proxy_host'])) $cli->set(['timeout' => CONFIG['http_timeout'],'http_proxy_host' => CONFIG['HTTP_proxy_host'],'http_proxy_port' => CONFIG['HTTP_proxy_port'],]); $cli->set(['timeout' => CONFIG['http_timeout'] + 15,]);
 
         /**
          * 设置请求头
@@ -160,7 +173,11 @@ class Personal
          * 发送异步请求
          */
         $cli->get($url, function ($cli) use ($data) {
+            /**
+             * DEBUG
+             */
             echo "异步返回消息: \n" .  $cli->body . "\n";
+
             if (!isset(json_decode($cli->body,true)['result'])) return;
             $result = json_decode($cli->body,true)['result'];
             if (count($result) == 0) return null;

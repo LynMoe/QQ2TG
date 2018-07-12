@@ -39,10 +39,13 @@ class Server
          * [Main]客户端发送消息时
          */
         $server->on('Message', function (swoole_websocket_server $server, $frame) use($int) {
-            global $int;
-            if (($int = $int + 1) >= CONFIG['restart_count']) exit("\n\n计数 " . $int . " , 结束进程\n\n");
-            echo "\n\n{$int}\n\n";
+            if (($int = $int + 1) >= CONFIG['restart_count']) exit("\n\n计数达到 " . $int . " , 结束进程\n\n");
+            echo "-----------[{$int}]----------\n";
             $data = json_decode($frame->data,true);
+
+            /**
+             * DEBUG
+             */
             /*echo "原始数据: \n";
             var_dump($data = json_decode($frame->data,true)); //原始数据
             echo "\n";*/

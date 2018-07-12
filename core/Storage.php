@@ -242,6 +242,11 @@ class Storage
         }
     }
 
+    /**
+     * 获取 Telegram Message ID 对应的 QQ User ID
+     * @param $tg_message_id
+     * @return int
+     */
     public static function get_qq_user_id($tg_message_id)
     {
         $db = new \Buki\Pdox(CONFIG['database']);

@@ -38,9 +38,12 @@ class Group
                     'media' => $param['image'],
                 ];
 
-                echo "单张图片:\n";
+                /**
+                 * DEBUG
+                 */
+                /*echo "单张图片:\n";
                 var_dump($message);
-                echo "\n";
+                echo "\n";*/
 
                 /**
                  * 发送消息
@@ -67,9 +70,12 @@ class Group
                     'media' => $param['image'],
                 ];
 
-                echo "多张图片:\n";
+                /**
+                 * DEBUG
+                 */
+                /*echo "多张图片:\n";
                 var_dump($param);
-                echo "\n";
+                echo "\n";*/
 
                 /**
                  * 发送消息
@@ -122,11 +128,18 @@ class Group
              * 多张图片
              */
             case 'sendMediaGroup':
-                var_dump($data);
+                /**
+                 * DEBUG
+                 */
+                /*var_dump($data);*/
+
                 $url = $host . 'sendMediaGroup?chat_id=' . $data['data']['chat_id'] . '&media=' . urlencode(json_encode($data['data']['media']));
                 break;
         }
 
+        /**
+         * DEBUG
+         */
         /**
          * 请求地址
          */
