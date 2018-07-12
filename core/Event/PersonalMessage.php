@@ -11,9 +11,16 @@ require_once __DIR__ . '/../Method.php';
 
 class PersonalMessage
 {
+    /**
+     * 处理 CQ 码内容
+     * @param $data
+     */
     public static function handler($data)
     {
-        var_dump($data);
+        /**
+         * DEBUG
+         */
+        /*var_dump($data);*/
 
         /**
          * 匹配所有CQ码
@@ -77,11 +84,13 @@ class PersonalMessage
             }
         }
 
-        echo "去除CQ码后的消息: \n";
-        var_dump($data);
-
-        echo "CQ码列表: \n";
-        var_dump($code);
+        /**
+         * DEBUG
+         */
+        /*echo "去除CQ码后的消息: \n";
+        var_dump($data);*/
+        /*echo "CQ码列表: \n";
+        var_dump($code);*/
 
         /**
          * 拼接文字消息
@@ -90,7 +99,7 @@ class PersonalMessage
     }
 
     /**
-     * 发送前拼接文字消息
+     * 拼接文字消息
      * @param $data
      * @param $code
      */
@@ -145,18 +154,22 @@ class PersonalMessage
 
         $message = '<b>{私聊}</b> <i> ' . Method::get_friend_name($data['user_id']) . " </i>[<a href=\"http://wpa.qq.com/msgrd?uin={$data['user_id']}\">{$data['user_id']}</a>]" . $header . $data['message'];
 
+        /**
+         * 为第一张图片添加标题
+         */
         foreach ($param['image'] as $key => $value)
         {
-            /**
-             * 为第一张图片添加标题
-             */
             $param['image'][$key] = ['type' => 'photo','media' => $value['media'],'parse_mode' => 'HTML','caption' => $message];
             break;
         }
 
+        /**
+         * DEBUG
+         */
         /*echo "消息内容:\n";
         var_dump($data['message'] = $message);
         echo "\n";*/
+
         $data['message'] = $message;
 
         /**
