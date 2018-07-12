@@ -107,7 +107,7 @@ switch ($data['message']['chat']['type'])
                         $result['message'] = str_replace($value,'[某格式]',$result['message']);
                     }
 
-                    $send_message = "[回复给" . Storage::get_card($result['user_id'],$qq_group) . ": " . substr($result['message'],0,20) . "]\n" . $send_message;
+                    $send_message = "[回复给" . Storage::get_card($result['user_id'],$qq_group) . ": " . mb_substr($result['message'],0,20,'UTF-8') . "]\n" . $send_message;
                     break;
             }
         }
