@@ -32,18 +32,20 @@
 1. 将代码拖到本地 :  ```git clone https://github.com/XiaoLin0815/QQ2TG.git```
 
 2. 将`config\Config.example.php`改名为`config\Config.php`并填写完整
-    - `ws_host`/`ws_port` :  `String/Int` 本地`websocket`的主机和端口
-    
-    - `CQ_HTTP_url` :  `String` 酷Q HTTP-API的HTTP服务器地址
-    - `cloudimage_token` :  `String` 用于将`webp`格式的sicker转换为jpg的api token, 地址[在此](https://www.cloudimage.io)，一定限度内免费
-    - `bot_token` :  `String` Telegram Bot API token, Telegram `@BotFather`获取
-    - `admin_id` :  `Int` Telegram 管理员的 `chat_id`, 目前用于发送性能调试数据
-    - `group_settings` :  `Array` 配置QQ群组与Telegram群组的对应关系, 请按照示例添加
-    - `database` :  `Array` MySQL数据库基本信息(后续可能会支持更多数据库)
-    - `HTTP_proxy_host/port` :  `String/Int` HTTP代理, 用于请求Telegram服务器(不需要请留空host)
-    - `http_timeout` :  `Int` 请求超时时间(秒)
-    - `image_proxy` :  `String` QQ 图片服务器海外CDN (推荐CloudFlare)
-    - `restart_count` :  `Int` 到达数目后退出进程, 若未设置进程守护请设置为无穷大(999999999999)
+
+    键           |值
+    :------------|-------
+     `ws_host`/`ws_port` |  `String/Int` 本地`websocket`的主机和端口
+     `CQ_HTTP_url` |  `String` 酷Q HTTP-API的HTTP服务器地址
+     `cloudimage_token` |  `String` 用于将`webp`格式的sicker转换为jpg的api token, 地址[在此](https://www.cloudimage.io)，一定限度内免费
+     `bot_token` |  `String` Telegram Bot API token, Telegram `@BotFather`获取
+     `admin_id` |  `Int` Telegram 管理员的 `chat_id`, 目前用于发送性能调试数据
+     `group_settings` |  `Array` 配置QQ群组与Telegram群组的对应关系, 请按照示例添加
+     `database` |  `Array` MySQL数据库基本信息(后续可能会支持更多数据库)
+     `HTTP_proxy_host/port` |  `String/Int` HTTP代理, 用于请求Telegram服务器(不需要请留空host)
+     `http_timeout` |  `Int` 请求超时时间(秒)
+     `image_proxy` |  `String` QQ 图片服务器海外CDN (推荐CloudFlare)
+     `restart_count` |  `Int` 到达数目后退出进程, 若未设置进程守护请设置为无穷大(999999999999)
 3. 安装酷Q(若要发送图片则要求安装Pro版本)以及[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件，并添加配置以下参数:
     - use_ws_reverse :  使用反向 WebSocket 通讯
     - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`ws_host`/`ws_port`
@@ -78,7 +80,8 @@
         [Install]
         WantedBy=multi-user.target
         ```
-11. enjoy it
+11. service QQ2TG start
+12. enjoy it
 
 ## 问题
 若要在 Linux 上使用 酷Q , 可参考[这里](https://github.com/CoolQ/docker-wine-coolq)
@@ -91,7 +94,7 @@
 
 **有可能**会出现程序运行时意外退出，若出现请将错误日志提交为issue，如果不弃坑的话应该会帮助解答/修正的
 
-QQ中的表情包(不包括漫游表情等图片表情)暂未找到方法获取，若找到方法会添加的
+QQ中的原创表情(不包括漫游表情等图片表情)暂未找到方法获取，若找到方法会添加的
 
 ## TODO
 - ~~异步消息发送~~
@@ -104,7 +107,7 @@ QQ中的表情包(不包括漫游表情等图片表情)暂未找到方法获取�
   - 从 Telegram 端发起私聊
 - 更多CQ码兼容
 
-dalao们如果有任何问题或者建议请在Issue中提出直接提交PR，感谢万分
+dalao们如果有任何问题或者建议请在issue中提出直接提交PR，感谢万分
 
 ## 题外话
 毕竟初中生, 就是头脑简单四肢发达, 思维算法一坨屎, 英语极差, 导致代码里很多奇怪或者重复的变量名, 还请多多包涵,有些地方代码质量不高、效率低下, 或者结构有问题的, 还请 dalao 们多多指点 
