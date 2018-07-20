@@ -18,10 +18,42 @@ require_once __DIR__ . '/../core/Storage.php';
  * 获取TG回调消息
  */
 $data = json_decode(file_get_contents("php://input"),true);
-
 if (empty($data)) die;
-
 error_log('Receive Data: ' . json_encode($data));
+
+/**
+ * 撤回消息按钮处理
+ */
+if (isset($data['callback_query']['data']))
+{
+    $return = json_decode($data['callback_query']['data'],true);
+    switch ($return['type'])
+    {
+        case 'recall':
+            $qq_return = json_decode($raw = file_get_contents(CONFIG['CQ_HTTP_url'] . '/delete_msg?message_id=' . $return['msg_id']),true);
+
+            /**
+             * 判断撤回状态
+             */
+            if ($qq_return['retcode'] != 0 && $qq_return['retcode'] != -39)
+            {
+                /**
+                 * 更改消息内容
+                 */
+                curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🚫消息未撤回(两分钟已过)'));
+
+                break;
+            }
+
+            /**
+             * 更改消息内容
+             */
+            curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔙消息已撤回'));
+
+            break;
+    }
+    die;
+}
 
 /**
  * 判断消息为群组消息或私聊消息
@@ -35,6 +67,7 @@ switch ($data['message']['chat']['type'])
         $chat_id = $data['message']['chat']['id'];
         $qq_group = 0;
         $message = [];
+        $tg_message_id = $data['message']['message_id'];
 
         /**
          * 获取QQ群信息
@@ -141,16 +174,27 @@ switch ($data['message']['chat']['type'])
         /**
          * 发送消息
          */
-        file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message));
+        $qq_result = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message)),true);
 
         /**
          * 性能检测
          */
         $time[] = microtime(true) - $start_time;
 
+        /**
+         * Telegram 撤回按钮
+         */
+        error_log('CoolQ Result: ' . curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id={$chat_id}&reply_to_message_id={$tg_message_id}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+                'inline_keyboard' => [[
+                    [
+                        'text' => '❌ReCall',
+                        'callback_data' => json_encode(['type'=>'recall','msg_id' => $qq_result['data']['message_id']]),
+                    ],],],
+            ])));
+
         break;
 
-    case 'private': //TODO
+    case 'private':
 
         /**
          * 初始化参数
@@ -218,15 +262,37 @@ switch ($data['message']['chat']['type'])
         /**
          * 发送消息
          */
-        file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_private_msg?user_id=' . $qq_user_id . '&message=' . urlencode($send_message));
+        $qq_result = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_private_msg?user_id=' . $qq_user_id . '&message=' . urlencode($send_message)),true);
 
         /**
          * 性能检测
          */
         $time[] = microtime(true) - $start_time;
 
+        /**
+         * Telegram 撤回按钮
+         */
+        error_log('CoolQ Result: ' . curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+                'inline_keyboard' => [[
+                    [
+                        'text' => '❌ReCall',
+                        'callback_data' => json_encode(['type'=>'recall','msg_id' => $qq_result['data']['message_id']]),
+                    ],],],
+            ])));
+
         break;
 }
+
+/**
+ * 性能检测
+ */
+$time[] = microtime(true) - $start_time;
+$p_data = '';
+foreach ($time as $value)
+{
+    $p_data .= ' ' . $value;
+}
+error_log('Performance data: ' . $p_data);
 
 /**
  * 请求TG-API

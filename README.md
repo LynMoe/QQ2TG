@@ -24,6 +24,7 @@
 - 拓展性较高, 可轻松支持一个新的 CQ 码或 Telegram 消息格式
 - 支持双向私聊消息(目前`只允许`QQ先发起对话)
 - 支持 QQ 自带的 Emoji
+- 支持 Telegram 端撤回 QQ 消息
 - 采用世界上最好的语言编写  ((日常拉仇恨
 
 实在编不出来了...  /滑稽
@@ -65,22 +66,23 @@
 7. 输入```php run.php```
 8. 在网站环境中设置 `/WebHook` 为运行目录
 9. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/WebHook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
-10. 配置进程守护程序(**必须**):
+10. 配置进程守护程序(**强烈建议**):
     - Systemd
         ```
+        # /usr/lib/systemd/system/QQ2TG.service
         [Unit]
         Description=QQ2TG
         Documentation=https://github.com/XiaoLin0815/QQ2TG
         After=network.target
         
         [Service]
-        ExecStart=/path/to/your/php /your/code/QQ2TG/run.php
+        ExecStart=/path/to/your/php /path/to/QQ2TG/run.php
         Restart=always
         
         [Install]
         WantedBy=multi-user.target
         ```
-11. service QQ2TG start
+11. 终端输入 ```service QQ2TG start```
 12. enjoy it
 
 ## 问题
@@ -101,6 +103,7 @@ QQ中的原创表情(不包括漫游表情等图片表情)暂未找到方法获�
 - ~~图片信息缓存~~
 - ~~用户群名片缓存~~
 - ~~支持私聊消息~~
+- ~~支持消息撤回~~
 - 解决文档中提到的问题
   - 消息错乱
   - 私聊消息 Timeout
@@ -115,6 +118,8 @@ dalao们如果有任何问题或者建议请在issue中提出直接提交PR，�
 或许真的要像[LWL](https://lwl.moe)说的那样`变得更优秀`吧
 
 ## 更新日志
+2018/07/20 支持消息撤回
+
 2018/07/18 回复消息提醒对方
 
 2018/07/12 支持双向私聊消息
