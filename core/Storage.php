@@ -36,7 +36,7 @@ class Storage
                 'card' => json_encode($card = self::get_new_card($user_id,$qq_group_id)),
                 'flush_time' => time(),
             ]);
-            echo "[{$user_id}]新用户, 名片: {$card}";
+            echo "[{$user_id}]新用户, 名片: {$card}\n";
             return $card;
         } else {
             /**
@@ -49,14 +49,14 @@ class Storage
                     'card' => json_encode($card = self::get_new_card($user_id,$qq_group_id)),
                     'flush_time' => time(),
                 ]);
-                echo "[{$user_id}]已过期, 原名片: {$data->card} , 新名片: {$card}";
+                echo "[{$user_id}]已过期, 原名片: {$data->card} , 新名片: {$card}\n";
                 return $card;
             } else {
                 /**
                  * 直接返回群名片
                  */
                 if ($data->card == null) goto flush;
-                echo "[{$user_id}]未过期, 名片: " . json_decode($data->card,true);
+                echo "[{$user_id}]未过期, 现名片: " . json_decode($data->card,true) . "\n";
                 return json_decode($data->card,true);
             }
         }

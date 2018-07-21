@@ -70,6 +70,6 @@ class Method
             }
         }
 
-        return json_decode(CONFIG['CQ_HTTP_url'] . '/get_stranger_info?user_id=' . $user_id,true)['data']['nickname'];
+        return json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/get_stranger_info?user_id=' . $user_id),true)['data']['nickname'];
     }
 }

@@ -33,9 +33,21 @@ if (isset($data['callback_query']['data']))
             $qq_return = json_decode($raw = file_get_contents(CONFIG['CQ_HTTP_url'] . '/delete_msg?message_id=' . $return['msg_id']),true);
 
             /**
+             * 判断是否为私聊消息
+             */
+            if ($data['callback_query']['message']['chat']['id'] == CONFIG['admin_id'])
+            {
+                /**
+                 * 更改消息内容
+                 */
+                curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔵撤回状态未知(仍有两分钟限制)'));
+
+                break;
+            }
+            /**
              * 判断撤回状态
              */
-            if ($qq_return['retcode'] != 0 && $qq_return['retcode'] != -39)
+            if ($qq_return['retcode'] != 0)
             {
                 /**
                  * 更改消息内容
