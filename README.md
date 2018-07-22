@@ -47,6 +47,7 @@
 
 1. 将代码拖到本地 :  ```git clone https://github.com/XiaoLin0815/QQ2TG.git```
 2. 将`config\Config.example.php`改名为`config\Config.php`并填写完整
+
     键           |值
     :------------|-------
      `ws_host`/`ws_port` |  `String/Int` 本地`websocket`的主机和端口
