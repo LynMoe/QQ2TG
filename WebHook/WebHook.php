@@ -13,6 +13,7 @@ $start_time = microtime(true);
 $time[] = 0;
 
 require_once __DIR__ . '/../core/Storage.php';
+require_once __DIR__ . '/../core/Method.php';
 
 /**
  * 获取TG回调消息
@@ -62,6 +63,14 @@ if (isset($data['callback_query']['data']))
              */
             curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔙消息已撤回'));
 
+            break;
+
+        case 'new_chat':
+            Method::add_placeholder($return['user_id'],$data['callback_query']['message']['message_id']);
+            /**
+             * 更改消息内容
+             */
+            curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('📤请直接回复该消息发起私聊'));
             break;
     }
     die;
@@ -213,7 +222,29 @@ switch ($data['message']['chat']['type'])
          */
         $message = [];
 
-        if (!isset($data['message']['reply_to_message']['message_id'])) die;
+        if (!isset($data['message']['reply_to_message']['message_id']))
+        {
+            $friends = [];
+
+            foreach (json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/_get_friend_list'),true)['data'] as $item)
+            {
+                foreach ($item['friends'] as $key => $value)
+                {
+                    $friends[] = [
+                        'text' => $value['remark'],
+                        'callback_data' => json_encode(['type'=>'new_chat','user_id'=>$value['user_id']]),
+                    ];
+
+                    //$friends[$value['user_id']] = $value['remark'];
+                }
+            }
+
+            curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('🙋好友列表') . "&reply_markup=" . json_encode([
+                    'inline_keyboard' => [$friends],
+                ]));
+
+            die;
+        }
         $tg_message_id = $data['message']['reply_to_message']['message_id'];
         $qq_user_id = Storage::get_qq_user_id($tg_message_id);
 

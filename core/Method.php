@@ -54,22 +54,43 @@ class Method
     }
 
     /**
-     * 请求 Coolq API 获取昵称或备注
+     * 请求 CoolQ API 获取昵称或备注
      * @param $user_id
      * @return string
      */
     public static function request_name($user_id)
     {
-        $friends_list = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/_get_friend_list'),true)['data'][0]['friends'];
+        $friends_list = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/_get_friend_list'),true)['data'];
 
-        foreach ($friends_list as $value)
+        foreach ($friends_list as $item)
         {
-            if ($value['user_id'] == $user_id)
+            foreach ($item['friends'] as $value)
             {
-                return $value['remark'];
+                if ($value['user_id'] == $user_id)
+                {
+                    return $value['remark'];
+                }
             }
         }
-
         return json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/get_stranger_info?user_id=' . $user_id),true)['data']['nickname'];
+    }
+
+    /**
+     * 插入发起私聊占位符
+     * @param $user_id
+     * @param $tg_message_id
+     * @return bool
+     */
+    public static function add_placeholder($user_id,$tg_message_id)
+    {
+        $db = new \Buki\Pdox(CONFIG['database']);
+        $db->table('private_messages')->insert([
+            'user_id' => $user_id,
+            'qq_message_id' => $tg_message_id,
+            'content' => json_encode('TG私聊占位'),
+            'tg_message_id' => $tg_message_id,
+            'time' => time(),
+        ]);
+        return true;
     }
 }

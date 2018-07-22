@@ -24,7 +24,7 @@
 - 使用 Swoole 的异步 HTTP Client 请求 Telegram Bot API 服务器
 - 将QQ图片缓存为 Telegram File ID , 提高效率
 - 拓展性较高, 可轻松支持一个新的 CQ 码或 Telegram 消息格式
-- 支持双向私聊消息(目前`只允许`QQ先发起对话)
+- 支持双向发起私聊消息
 - 支持 QQ 自带的 Emoji
 - 支持 Telegram 端撤回 QQ 消息
 - 支持私聊 QQ 黑名单
@@ -87,6 +87,16 @@
         ```
 11. 终端输入 ```service QQ2TG start```
 12. enjoy it
+
+
+
+TG端发送消息:
+
+1.私聊机器人并发送 `/new_chat`
+
+2.选择要私聊的用户
+
+3.回复机器人发出的消息
 
 ## 问题
 若要在 Linux 上使用 酷Q , 可参考[这里](https://github.com/CoolQ/docker-wine-coolq)
