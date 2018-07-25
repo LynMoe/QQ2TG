@@ -205,7 +205,7 @@ switch ($data['message']['chat']['type'])
         /**
          * Telegram 撤回按钮
          */
-        error_log('CoolQ Result: ' . curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id={$chat_id}&reply_to_message_id={$tg_message_id}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+        error_log('Telegram Result: ' . curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id={$chat_id}&reply_to_message_id={$tg_message_id}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
                 'inline_keyboard' => [[
                     [
                         'text' => '❌ReCall',
@@ -315,7 +315,7 @@ switch ($data['message']['chat']['type'])
         /**
          * Telegram 撤回按钮
          */
-        error_log('CoolQ Result: ' . curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+        error_log('Telegram Result: ' . curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
                 'inline_keyboard' => [[
                     [
                         'text' => '❌ReCall',
