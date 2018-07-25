@@ -80,9 +80,9 @@ define('CONFIG',[
     ],
 
     /**
-     * 本地 /public/get_image.php 文件的外网地址
+     * 本地 /public/images 目录的外网地址
      */
-    'image_provider_url' => 'http://127.0.0.1/get_image.php',
+    'image_provider_url' => 'http://127.0.0.1/images/',
 
     /**
      * 本地用于储存 Telegram 图片的目录

@@ -15,6 +15,8 @@ $time[] = 0;
 require_once __DIR__ . '/../core/Storage.php';
 require_once __DIR__ . '/../core/Method.php';
 
+mkdir(CONFIG['image_folder']);
+
 /**
  * 获取TG回调消息
  */
@@ -133,7 +135,7 @@ switch ($data['message']['chat']['type'])
                     /**
                      * 添加图片
                      */
-                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . '?file_id=' . $item['file_id'] . ']';
+                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . $item['file_id'] . '.png]';
 
                     /**
                      * 性能检测
@@ -274,7 +276,7 @@ switch ($data['message']['chat']['type'])
                     /**
                      * 添加图片
                      */
-                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . '?file_id=' . $item['file_id'] . ']';
+                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . $item['file_id'] . '.png]';
 
                     /**
                      * 性能检测

@@ -260,16 +260,25 @@ class Storage
      */
     public static function save_telegram_image($file_id)
     {
+        $filename = CONFIG['image_folder'] . '/' . $file_id;
+
+        if (file_exists($filename . '.png')) return null;
+
         $file_pah = json_decode(Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/getFile?file_id=" . $file_id),true)['result']['file_path'];
         $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot_token'] . "/" . $file_pah;
-
-        $filename = CONFIG['image_folder'] . '/' . $file_id;
 
         file_put_contents($filename,Method::curl($photo_url));
 
         $img = imagecreatefromwebp($filename);
-        imagepng($img,$filename);
+        ob_start();
+        imagepng($img);
+        $image_data = ob_get_contents();
+        ob_end_clean();
         imagedestroy($img);
+
+        file_put_contents($filename . '.png',$image_data);
+
+        unlink($filename);
 
         return null;
     }
