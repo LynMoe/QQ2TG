@@ -93,4 +93,42 @@ class Method
         ]);
         return true;
     }
+
+    /**
+     * 请求TG-API
+     * @param $url
+     * @return mixed
+     */
+    public static function curl($url)
+    {
+        error_log('Request URL: ' . $url);
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        if (!empty(CONFIG['HTTP_proxy_host'])) curl_setopt ($ch, CURLOPT_PROXY, CONFIG['HTTP_proxy_host'] . ':' . CONFIG['HTTP_proxy_port']);
+        curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
+        curl_setopt ($ch, CURLOPT_TIMEOUT, CONFIG['http_timeout']);
+
+        $headers = array();
+        $headers[] = "Connection: keep-alive";
+        $headers[] = "Pragma: no-cache";
+        $headers[] = "Cache-Control: no-cache";
+        $headers[] = "Upgrade-Insecure-Requests: 1";
+        $headers[] = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36";
+        $headers[] = "Accept-Encoding: gzip, deflate, br";
+        $headers[] = "Accept-Language: zh-CN,zh;q=0.9,en;q=0.8";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close ($ch);
+
+        error_log('Return Data: ' . $result);
+
+        return $result;
+    }
 }

@@ -252,4 +252,25 @@ class Storage
         $db = new \Buki\Pdox(CONFIG['database']);
         return $db->table('private_messages')->where('tg_message_id',$tg_message_id)->get()->user_id;
     }
+
+    /**
+     * 保存 Telegram 图片至本地
+     * @param $file_id
+     * @return null
+     */
+    public static function save_telegram_image($file_id)
+    {
+        $file_pah = json_decode(Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/getFile?file_id=" . $file_id),true)['result']['file_path'];
+        $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot_token'] . "/" . $file_pah;
+
+        $filename = CONFIG['image_folder'] . '/' . $file_id;
+
+        file_put_contents($filename,Method::curl($photo_url));
+
+        $img = imagecreatefromwebp($filename);
+        imagepng($img,$filename);
+        imagedestroy($img);
+
+        return null;
+    }
 }

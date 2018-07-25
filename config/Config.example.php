@@ -19,11 +19,6 @@ define('CONFIG',[
     'CQ_HTTP_url' => 'http://127.0.0.1:5700',
 
     /**
-     * cloudimage.io 密钥
-     */
-    'cloudimage_token' => 'f23rrwar3r',
-
-    /**
      * Telegram Bot API Token
      */
     'bot_token' => '123456789:QWERTYUIPASFDGHJKLZXCVBM',
@@ -83,5 +78,15 @@ define('CONFIG',[
         '2720152058', //QQ团队
         '2909288299', //天天爱游戏
     ],
+
+    /**
+     * 本地 /public/get_image.php 文件的外网地址
+     */
+    'image_provider_url' => 'http://127.0.0.1/get_image.php',
+
+    /**
+     * 本地用于储存 Telegram 图片的目录
+     */
+    'image_folder' => __DIR__ . '/../public/images/',
 ]);
 

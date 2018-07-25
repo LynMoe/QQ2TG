@@ -41,7 +41,7 @@ if (isset($data['callback_query']['data']))
                 /**
                  * 更改消息内容
                  */
-                curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔵撤回状态未知(仍有两分钟限制)'));
+                Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔵撤回状态未知(仍有两分钟限制)'));
 
                 break;
             }
@@ -53,7 +53,7 @@ if (isset($data['callback_query']['data']))
                 /**
                  * 更改消息内容
                  */
-                curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🚫消息未撤回(两分钟已过)'));
+                Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🚫消息未撤回(两分钟已过)'));
 
                 break;
             }
@@ -61,7 +61,7 @@ if (isset($data['callback_query']['data']))
             /**
              * 更改消息内容
              */
-            curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔙消息已撤回'));
+            Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔙消息已撤回'));
 
             break;
 
@@ -70,7 +70,7 @@ if (isset($data['callback_query']['data']))
             /**
              * 更改消息内容
              */
-            curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('📤请直接回复该消息发起私聊'));
+            Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('📤请直接回复该消息发起私聊'));
             break;
     }
     die;
@@ -123,24 +123,17 @@ switch ($data['message']['chat']['type'])
             switch ($item['type'])
             {
                 case 'photo':
-                    $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot_token'] . "/" . $file_name = json_decode(curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/getFile?file_id=" . $item['file_id']),true)['result']['file_path'];
-                    //file_put_contents(__DIR__ . '/Data/Photos/' . md5($photo_url) . '.jpg',$file_content = file_get_contents($photo_url)); //储存文件
+                    Storage::save_telegram_image($item['file_id']);
 
                     /**
                      * 性能检测
                      */
                     $time[] = microtime(true) - $start_time;
 
-                    $tmp = explode('.',$file_name);
-                    if ($tmp[1] == 'jpg')
-                    {
-                        $send_message .= '[CQ:image,file=' . $photo_url . ']';
-                    } else {
-                        /**
-                         * 若为其它类型，转化为PNG文件
-                         */
-                        $send_message .= '[CQ:image,file=https://' . CONFIG['cloudimage_token'] . '.cloudimg.io/width/' . $item['width'] . '/tjpg/' . $photo_url . ']';
-                    }
+                    /**
+                     * 添加图片
+                     */
+                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . '?file_id=' . $item['file_id'] . ']';
 
                     /**
                      * 性能检测
@@ -205,7 +198,7 @@ switch ($data['message']['chat']['type'])
         /**
          * Telegram 撤回按钮
          */
-        error_log('Telegram Result: ' . curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id={$chat_id}&reply_to_message_id={$tg_message_id}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+        error_log('Telegram Result: ' . Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id={$chat_id}&reply_to_message_id={$tg_message_id}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
                 'inline_keyboard' => [[
                     [
                         'text' => '❌ReCall',
@@ -239,7 +232,7 @@ switch ($data['message']['chat']['type'])
                 }
             }
 
-            curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('🙋好友列表') . "&reply_markup=" . json_encode([
+            Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('🙋好友列表') . "&reply_markup=" . json_encode([
                     'inline_keyboard' => [$friends],
                 ]));
 
@@ -271,24 +264,17 @@ switch ($data['message']['chat']['type'])
             switch ($item['type'])
             {
                 case 'photo':
-                    $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot_token'] . "/" . $file_name = json_decode(curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/getFile?file_id=" . $item['file_id']),true)['result']['file_path'];
-                    //file_put_contents(__DIR__ . '/Data/Photos/' . md5($photo_url) . '.jpg',$file_content = file_get_contents($photo_url)); //储存文件
+                    Storage::save_telegram_image($item['file_id']);
 
                     /**
                      * 性能检测
                      */
                     $time[] = microtime(true) - $start_time;
 
-                    $tmp = explode('.',$file_name);
-                    if ($tmp[1] == 'jpg')
-                    {
-                        $send_message .= '[CQ:image,file=' . $photo_url . ']';
-                    } else {
-                        /**
-                         * 若为其它类型，转化为PNG文件
-                         */
-                        $send_message .= '[CQ:image,file=https://' . CONFIG['cloudimage_token'] . '.cloudimg.io/width/' . $item['width'] . '/tjpg/' . $photo_url . ']';
-                    }
+                    /**
+                     * 添加图片
+                     */
+                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . '?file_id=' . $item['file_id'] . ']';
 
                     /**
                      * 性能检测
@@ -315,7 +301,7 @@ switch ($data['message']['chat']['type'])
         /**
          * Telegram 撤回按钮
          */
-        error_log('Telegram Result: ' . curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+        error_log('Telegram Result: ' . Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
                 'inline_keyboard' => [[
                     [
                         'text' => '❌ReCall',
@@ -336,38 +322,3 @@ foreach ($time as $value)
     $p_data .= ' ' . $value;
 }
 error_log('Performance data: ' . $p_data);
-
-/**
- * 请求TG-API
- * @param $url
- * @return mixed
- */
-function curl($url)
-{
-    error_log('Request Data: ' . $url);
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-    if (!empty(CONFIG['HTTP_proxy_host'])) curl_setopt ($ch, CURLOPT_PROXY, CONFIG['HTTP_proxy_host'] . ':' . CONFIG['HTTP_proxy_port']);
-    curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
-    curl_setopt ($ch, CURLOPT_TIMEOUT, CONFIG['http_timeout']);
-
-    $headers = array();
-    $headers[] = "Connection: keep-alive";
-    $headers[] = "Pragma: no-cache";
-    $headers[] = "Cache-Control: no-cache";
-    $headers[] = "Upgrade-Insecure-Requests: 1";
-    $headers[] = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36";
-    $headers[] = "Accept-Encoding: gzip, deflate, br";
-    $headers[] = "Accept-Language: zh-CN,zh;q=0.9,en;q=0.8";
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-    $result = curl_exec($ch);
-    if (curl_errno($ch)) {
-        echo 'Error:' . curl_error($ch);
-    }
-    curl_close ($ch);
-    return $result;
-}
