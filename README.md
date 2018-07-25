@@ -7,7 +7,7 @@
 ## 演示
 ![Snipaste 2018-07-22 14-56-41.png](https://i.loli.net/2018/07/22/5b5430944d542.png)
 ![Snipaste 2018-07-22 14-57-56.png](https://i.loli.net/2018/07/22/5b54309451a4b.png)
-![Snipaste 2018-07-22 14-58-53.png](https://i.loli.net/2018/07/22/5b5430942e387.png)
+![Snipaste 2018-07-22 14-58-53.png](https://i.loli.net/2018/07/26/5b58a0015f4a6.png)
 ![Snipaste 2018-07-22 15-04-23.png](https://i.loli.net/2018/07/22/5b543093ec26d.png)
 ![Snipaste 2018-07-22 15-05-43.png](https://i.loli.net/2018/07/22/5b5430940f0d7.png)
 
@@ -39,6 +39,7 @@
 - 支持 QQ 自带的 Emoji
 - 支持 Telegram 端撤回 QQ 消息
 - 支持私聊 QQ 黑名单
+- 支持 Sticker 无损转发 (可以当 Sticker 转移机器人啦233
 - 采用世界上最好的语言编写  ((日常拉仇恨
 
 实在编不出来了...  /滑稽
@@ -52,7 +53,6 @@
     :------------|-------
      `ws_host`/`ws_port` |  `String/Int` 本地`websocket`的主机和端口
      `CQ_HTTP_url` |  `String` 酷Q HTTP-API的HTTP服务器地址
-     `cloudimage_token` |  `String` 用于将`webp`格式的sicker转换为jpg的api token, 地址[在此](https://www.cloudimage.io)，一定限度内免费
      `bot_token` |  `String` Telegram Bot API token, Telegram `@BotFather`获取
      `admin_id` |  `Int` Telegram 管理员的 `chat_id`, 目前用于发送性能调试数据
      `group_settings` |  `Array` 配置QQ群组与Telegram群组的对应关系, 请按照示例添加
@@ -61,6 +61,8 @@
      `http_timeout` |  `Int` 请求超时时间(秒)
      `image_proxy` |  `String` QQ 图片服务器海外CDN (推荐CloudFlare)
      `restart_count` |  `Int` 到达数目后退出进程, 若未设置进程守护请设置为无穷大(999999999999)
+     `image_provider_url` | `String` `webhook.php` 同级目录下的 `images` 目录访问地址
+     `image_folder` | `String` Telegram 图片的缓存文件夹
 3. 安装酷Q(若要发送图片则要求安装Pro版本)以及[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件，并添加配置以下参数:
     - use_ws_reverse :  使用反向 WebSocket 通讯
     - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`ws_host`/`ws_port`
@@ -77,8 +79,8 @@
 5. 确保您的PHP已安装了`swoole`扩展
 6. 进入目录, 输入```composer update```
 7. 输入```php run.php```
-8. 在网站环境中设置 `/WebHook` 为运行目录
-9. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/WebHook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
+8. 在网站环境中设置 `/public` 为运行目录
+9. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/webhook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
 10. 配置进程守护程序(**强烈建议**):
     - Systemd
         ```bash
@@ -133,6 +135,8 @@ dalao们如果有任何问题或者建议请在issue中提出或直接提交PR�
 或许真的要像[LWL](https://lwl.moe)说的那样`变得更优秀`吧
 
 ## 更新日志
+
+2018/07/26 支持 Sticker 本地处理转发
 
 2018/07/22 支持 Telegram 端先发起私聊
 
