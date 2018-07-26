@@ -290,6 +290,6 @@ class Storage
 
         unlink($filename);
 
-        return $file_id . '.png';
+        return null;
     }
 }
