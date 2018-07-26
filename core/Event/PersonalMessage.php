@@ -142,7 +142,7 @@ class PersonalMessage
                     $header .= "[GIF]<a href='{$v['raw']}'>链接</a>";
                     break;
                 case 'share':
-                    $header .= "[分享]<a href='{$v['raw']['url']}'>{$v['raw']['title']}</a>\n{$v['raw']['content']}\n<a href='{$v['raw']['image']}'>Media</a>\n<a href='{$v['raw']['url']}'>链接</a>";
+                    $header .= "[分享]<a href='{$v['raw']['url']}'>{$v['raw']['title']}</a>\n{$v['raw']['content']}\n<a href='{$v['raw']['url']}'>链接</a>\n<a href='{$v['raw']['image']}'>Media</a>";
                     break;
             }
         }
