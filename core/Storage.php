@@ -264,12 +264,22 @@ class Storage
 
         if (file_exists($filename . '.png')) return null;
 
-        $file_pah = json_decode(Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/getFile?file_id=" . $file_id),true)['result']['file_path'];
-        $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot_token'] . "/" . $file_pah;
+        $file_path = json_decode(Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/getFile?file_id=" . $file_id),true)['result']['file_path'];
+        $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot_token'] . "/" . $file_path;
 
         file_put_contents($filename,Method::curl($photo_url));
 
-        $img = imagecreatefromwebp($filename);
+        $tmp = explode('.',$file_path);
+        if ($tmp[1] == 'jpg')
+        {
+            $img = imagecreatefromjpeg($filename);
+        } else {
+            /**
+             * 若为其它类型，转化为PNG文件
+             */
+            $img = imagecreatefromwebp($filename);
+        }
+
         ob_start();
         imagepng($img);
         $image_data = ob_get_contents();
@@ -280,6 +290,6 @@ class Storage
 
         unlink($filename);
 
-        return null;
+        return $file_id . '.png';
     }
 }

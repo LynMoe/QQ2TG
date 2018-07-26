@@ -125,8 +125,6 @@ switch ($data['message']['chat']['type'])
             switch ($item['type'])
             {
                 case 'photo':
-                    Storage::save_telegram_image($item['file_id']);
-
                     /**
                      * 性能检测
                      */
@@ -135,7 +133,7 @@ switch ($data['message']['chat']['type'])
                     /**
                      * 添加图片
                      */
-                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . $item['file_id'] . '.png]';
+                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . Storage::save_telegram_image($item['file_id']) . ']';
 
                     /**
                      * 性能检测
@@ -266,8 +264,6 @@ switch ($data['message']['chat']['type'])
             switch ($item['type'])
             {
                 case 'photo':
-                    Storage::save_telegram_image($item['file_id']);
-
                     /**
                      * 性能检测
                      */
@@ -276,7 +272,7 @@ switch ($data['message']['chat']['type'])
                     /**
                      * 添加图片
                      */
-                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . $item['file_id'] . '.png]';
+                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . Storage::save_telegram_image($item['file_id']) . ']';
 
                     /**
                      * 性能检测
