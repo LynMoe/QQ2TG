@@ -54,13 +54,24 @@ class GroupMessage
                  * 若要添加CQ码支持在此添加
                  */
                 case 'image':
-                    $code[] = [
-                        'type' => 'image',
-                        /**
-                         * raw 为QQ图片 URL
-                         */
-                        'raw' => str_replace('url=','',str_replace(']','',$temp[2])),
-                    ];
+                    if (substr(str_replace('file=','',$temp[1]),-3,3) == 'gif')
+                    {
+                        $code[] = [
+                            'type' => 'gif',
+                            /**
+                             * raw 为QQ图片 URL
+                             */
+                            'raw' => str_replace('url=','',str_replace(']','',$temp[2])),
+                        ];
+                    } else {
+                        $code[] = [
+                            'type' => 'image',
+                            /**
+                             * raw 为QQ图片 URL
+                             */
+                            'raw' => str_replace('url=','',str_replace(']','',$temp[2])),
+                        ];
+                    }
                     break;
                 case 'at':
                     $code[] = [
@@ -135,6 +146,9 @@ class GroupMessage
                         'type' => 'photo',
                         'media' => $url = str_replace('https://gchat.qpic.cn',CONFIG['image_proxy'],$v['raw']),
                     ];
+                    break;
+                case 'gif':
+                    $header .= "[GIF]<a href='{$v['raw']}'>链接</a>";
                     break;
                 case 'share':
                     $header .= "[分享]<a href='{$v['raw']['url']}'>{$v['raw']['title']}</a>\n{$v['raw']['content']}\n<a href='{$v['raw']['image']}'>Media</a>\n<a href='{$v['raw']['url']}'>链接</a>";
