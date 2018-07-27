@@ -1,4 +1,3 @@
-
 # QQ2TG
 
 一个帮助 QQ 与 Telegram 互联的小程序
@@ -54,6 +53,8 @@
      `ws_host`/`ws_port` |  `String/Int` 本地`websocket`的主机和端口
      `CQ_HTTP_url` |  `String` 酷Q HTTP-API的HTTP服务器地址
      `bot_token` |  `String` Telegram Bot API token, Telegram `@BotFather`获取
+     `debug_token` | `String` Telegram Bot API token， 用于发送调试日志
+     `logger_level` | `Int` 0-5 整数, 提醒等级依次升高(DeBug->Info->Notice->Warning->Error->None)
      `admin_id` |  `Int` Telegram 管理员的 `chat_id`, 目前用于发送性能调试数据
      `group_settings` |  `Array` 配置QQ群组与Telegram群组的对应关系, 请按照示例添加
      `database` |  `Array` MySQL数据库基本信息(后续可能会支持更多数据库)
@@ -64,17 +65,20 @@
      `image_provider_url` | `String` `webhook.php` 同级目录下的 `images` 目录访问地址
      `image_folder` | `String` Telegram 图片的缓存文件夹
 3. 安装酷Q(若要发送图片则要求安装Pro版本)以及[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件，并添加配置以下参数:
+
     - use_ws_reverse :  使用反向 WebSocket 通讯
     - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`ws_host`/`ws_port`
     - host/port/use_http :  HTTP服务器设置，对应操作2中配置的`CQ_HTTP_url`
-    ```json
-    "use_ws_reverse": true,
-    "ws_reverse_api_url": "ws://192.168.31.120:9501",
-    "ws_reverse_event_url": "ws://192.168.31.120:9501",
-    "host": "0.0.0.0",
-    "port": 5700,
-    "use_http": true,
-    ```
+      ```json
+      {
+          "use_ws_reverse":true,
+          "ws_reverse_api_url":"ws://192.168.31.120:9501",
+          "ws_reverse_event_url":"ws://192.168.31.120:9501",
+          "host":"0.0.0.0",
+          "port":5700,
+          "use_http":true
+      }
+      ```
 4. 确保您本地配置好科学上网工具或填写好了`HTTP_proxy_host/port`(若不需要请留空)
 5. 确保您的PHP已安装了`swoole`扩展
 6. 进入目录, 输入```composer update```
@@ -82,8 +86,9 @@
 8. 在网站环境中设置 `/public` 为运行目录
 9. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/webhook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
 10. 配置进程守护程序(**强烈建议**):
+
     - Systemd
-        ```bash
+        ```ini
         # /usr/lib/systemd/system/QQ2TG.service
         [Unit]
         Description=QQ2TG
@@ -105,11 +110,13 @@
 
 ## 问题
 
+日志等级建议调至 2 或以上，否则可能会造成严重的消息延误
+
+由于 Telegram 的特殊性，所有由 QQ 转发至 Telegram 的 GIF 图像都会以链接的方式发送，至于客户端能不能自动解析显示就要看运气了 /滑稽
+
 若要在 Linux 上使用 酷Q , 可参考[这里](https://github.com/CoolQ/docker-wine-coolq)
 
-现在可能会出现消息**错乱**等情况(比如 QQ 在图片后的消息会在 TG 出现在图片前)，应该会在以后的版本中进行修正  ((没思路, 求PR
-
-若要修改消息样式，可前往 `core\Event\(Private/Group)Message.php` 自行修改
+现在可能会出现消息**错乱**等情况(比如 QQ 在图片后的消息会在 TG 出现在图片前)   ((没思路, 求PR
 
 QQ中的原创表情(不包括漫游表情等图片表情)暂未找到方法获取，若找到方法会添加的
 
@@ -135,6 +142,8 @@ dalao们如果有任何问题或者建议请在issue中提出或直接提交PR�
 或许真的要像[LWL](https://lwl.moe)说的那样`变得更优秀`吧
 
 ## 更新日志
+
+2018/07/27 新增日志记录
 
 2018/07/26 支持 Sticker 本地处理转发
 
