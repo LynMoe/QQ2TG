@@ -141,7 +141,7 @@ class Method
      */
     public static function log($level,$message)
     {
-        if (CONFIG['logger_level'] < $level) return null;
+        if (CONFIG['logger_level'] > $level) return null;
         switch ($level)
         {
             case 0:
