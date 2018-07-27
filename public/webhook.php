@@ -15,7 +15,11 @@ $time[] = 0;
 require_once __DIR__ . '/../core/Storage.php';
 require_once __DIR__ . '/../core/Method.php';
 
-mkdir(CONFIG['image_folder']);
+/**
+ * 检测目录是否存在与读写权限
+ */
+if (!is_dir(CONFIG['image_folder'])) mkdir(CONFIG['image_folder']);
+if (!is_writable(CONFIG['image_folder'])) Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . '/sendMessage?user_id=' . CONFIG['admin_id'] . '&message=' . urlencode('Master快去检查一下图片储存目录的读写吧~ (' . CONFIG['image_folder'] . ')'));
 
 /**
  * 获取TG回调消息
@@ -23,6 +27,11 @@ mkdir(CONFIG['image_folder']);
 $data = json_decode(file_get_contents("php://input"),true);
 if (empty($data)) die;
 error_log('Receive Data: ' . json_encode($data));
+
+/**
+ * 判断操作人是不是 Bot 管理员
+ */
+if (@$data['message']['from']['id'] != CONFIG['admin_id']) die;
 
 /**
  * 撤回消息按钮处理
