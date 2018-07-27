@@ -48,7 +48,7 @@ class Server
             /**
              * Log
              */
-            Method::log(0,'CoolQ Receive Raw Data: ' . $data);
+            Method::log(0,'CoolQ Receive Raw Data: ' . $frame->data);
 
             /**
              * 发往 /core/Event.php handler 分析消息类型
