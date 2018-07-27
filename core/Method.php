@@ -97,11 +97,12 @@ class Method
     /**
      * 请求TG-API
      * @param $url
+     * @param $log
      * @return mixed
      */
-    public static function curl($url)
+    public static function curl($url,$log = true)
     {
-        error_log('Request URL: ' . $url);
+        if ($log) self::log(0,'CURL Request URL: ' . $url);
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -127,8 +128,39 @@ class Method
         }
         curl_close ($ch);
 
-        error_log('Return Data: ' . $result);
+        if ($log) self::log(0,'CURL Return Data: ' . $result);
 
         return $result;
+    }
+
+    /**
+     * 日志记录
+     * @param $level
+     * @param $message
+     * @return null
+     */
+    public static function log($level,$message)
+    {
+        if (CONFIG['logger_level'] < $level) return null;
+        switch ($level)
+        {
+            case 0:
+                $level = 'DEBUG';
+                break;
+            case 1:
+                $level = 'INFO';
+                break;
+            case 2:
+                $level = 'NOTICE';
+                break;
+            case 3:
+                $level = 'WARNING';
+                break;
+            case 4:
+                $level = 'ERROR';
+        }
+
+        self::curl("https://api.telegram.org/bot" . CONFIG['debug_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&text=" . urlencode("[{$level}]" . $message),false);
+        return null;
     }
 }

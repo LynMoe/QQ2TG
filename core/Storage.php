@@ -288,7 +288,7 @@ class Storage
 
         file_put_contents($filename . '.png',$image_data);
 
-        unlink($filename);
+        if (unlink($filename)) Method::log(0,"删除文件{$filename}成功"); else Method::log(2,"删除文件{$filename}失败");
 
         return null;
     }

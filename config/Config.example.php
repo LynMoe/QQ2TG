@@ -24,6 +24,22 @@ define('CONFIG',[
     'bot_token' => '123456789:QWERTYUIPASFDGHJKLZXCVBM',
 
     /**
+     * DeBug Bot API Token
+     */
+    'debug_token' => '123456789:7895n72398nuYUIgyuigf',
+
+    /**
+     * Logger Level
+     * 5 => None
+     * 4 => Error
+     * 3 => Warning
+     * 2 => Notice
+     * 1 => Info
+     * 0 => DeBug
+     */
+    'logger_level' => 3,
+
+    /**
      * Telegram 管理员 CHAT ID
      */
     'admin_id' => '346077324',

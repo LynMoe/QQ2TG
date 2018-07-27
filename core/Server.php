@@ -8,6 +8,7 @@
 
 require_once __DIR__ . '/Event.php';
 require_once __DIR__ . '/Storage.php';
+require_once __DIR__ . '/Method.php';
 
 class Server
 {
@@ -45,11 +46,9 @@ class Server
             $data = json_decode($frame->data,true);
 
             /**
-             * DEBUG
+             * Log
              */
-            /*echo "原始数据: \n";
-            var_dump($data = json_decode($frame->data,true)); //原始数据
-            echo "\n";*/
+            Method::log(0,'CoolQ Receive Raw Data: ' . $data);
 
             /**
              * 发往 /core/Event.php handler 分析消息类型

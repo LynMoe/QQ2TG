@@ -138,14 +138,16 @@ class Personal
         }
 
         /**
-         * DEBUG
-         */
-        /**
          * 请求地址
          */
         echo "请求地址:\n";
         var_dump($url);
         echo "\n";
+
+        /**
+         * Log
+         */
+        Method::log(0,'Request URL: ' . $url);
 
         $domainName = "api.telegram.org";
 
@@ -173,10 +175,12 @@ class Personal
          * 发送异步请求
          */
         $cli->get($url, function ($cli) use ($data) {
-            /**
-             * DEBUG
-             */
             echo "异步返回消息: \n" .  $cli->body . "\n";
+
+            /**
+             * Log
+             */
+            Method::log(0,'Request URL: ' . $cli->body);
 
             if (!isset(json_decode($cli->body,true)['result'])) return;
             $result = json_decode($cli->body,true)['result'];
