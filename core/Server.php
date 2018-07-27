@@ -34,6 +34,7 @@ class Server
          */
         $server->on('open', function (swoole_websocket_server $server, $request) {
             echo "与客户端 {$request->fd} 号成功握手\n";
+            Method::log(4,"与客户端 {$request->fd} 号成功握手");
         });
 
         /**
@@ -62,6 +63,7 @@ class Server
          */
         $server->on('close', function ($server, $fd) {
             echo "与客户端 {$fd} 号失去连接\n";
+            Method::log(4,"与客户端 {$fd} 号失去连接");
         });
 
         /**
