@@ -18,7 +18,7 @@ require_once __DIR__ . '/../core/Method.php';
 /**
  * 检测目录是否存在与读写权限
  */
-if (!is_dir(CONFIG['image_folder'])) if (mkdir(CONFIG['image_folder'])) Method::log(1,'创建图片目录成功'); Method::log(3,'创建图片目录失败');
+if (!is_dir(CONFIG['image_folder'])) {if (mkdir(CONFIG['image_folder'])) Method::log(1,'创建图片目录成功'); Method::log(3,'创建图片目录失败');}
 if (!is_writable(CONFIG['image_folder'])) Method::log(3,'Master快去检查一下图片储存目录的读写吧~ (' . CONFIG['image_folder'] . ')');
 
 /**
@@ -31,7 +31,10 @@ Method::log(0,'WebHook Receive Data: ' . json_encode($data));
 /**
  * 判断操作人是不是 Bot 管理员
  */
-if (@$data['message']['from']['id'] != CONFIG['admin_id']) die;
+if (!((@$data['callback_query']['from']['id'] == CONFIG['admin_id']) || (@$data['message']['from']['id'] == CONFIG['admin_id'])))
+{
+    die;
+}
 
 /**
  * 撤回消息按钮处理
