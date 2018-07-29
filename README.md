@@ -65,21 +65,27 @@
      `image_provider_url` | `String` `webhook.php` 同级目录下的 `images` 目录访问地址
      `image_folder` | `String` Telegram 图片的缓存文件夹
 3. 安装酷Q(若要发送图片则要求安装Pro版本)以及[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件，并添加配置以下参数:
-
+  - 酷Q:
+    - 更改登录模式为平板模式(可使电脑手机酷Q同时在线)
+      ```ini
+      [Debug]
+      Platform=2
+      ```
+  - HTTP API:
     - use_ws_reverse :  使用反向 WebSocket 通讯
     - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`ws_host`/`ws_port`
     - host/port/use_http :  HTTP服务器设置，对应操作2中配置的`CQ_HTTP_url`
       ```json
-      {
-          "use_ws_reverse":true,
-          "ws_reverse_api_url":"ws://192.168.31.120:9501",
-          "ws_reverse_event_url":"ws://192.168.31.120:9501",
-          "host":"0.0.0.0",
-          "port":5700,
-          "use_http":true
-      }
+                           {
+                               "use_ws_reverse":true,
+                               "ws_reverse_api_url":"ws://192.168.31.120:9501",
+                               "ws_reverse_event_url":"ws://192.168.31.120:9501",
+                               "host":"0.0.0.0",
+                               "port":5700,
+                               "use_http":true
+                           }
       ```
-4. 确保您本地配置好科学上网工具或填写好了`HTTP_proxy_host/port`(若不需要请留空)
+4. 确保您本地可访问 Telegram Bot API 服务器或填写好了`HTTP_proxy_host/port`(若不需要请留空)
 5. 确保您的PHP已安装了`swoole`扩展
 6. 进入目录, 输入```composer update```
 7. 输入```php run.php```
