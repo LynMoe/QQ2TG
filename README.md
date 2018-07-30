@@ -46,52 +46,34 @@
 ## 使用
 
 1. 将代码拖到本地 :  ```git clone https://github.com/XiaoLin0815/QQ2TG.git```
-2. 将`config\Config.example.php`改名为`config\Config.php`并填写完整
-
-    键           |值
-    :------------|-------
-     `ws_host`/`ws_port` |  `String/Int` 本地`websocket`的主机和端口
-     `CQ_HTTP_url` |  `String` 酷Q HTTP-API的HTTP服务器地址
-     `bot_token` |  `String` Telegram Bot API token, Telegram `@BotFather`获取
-     `debug_token` | `String` Telegram Bot API token， 用于发送调试日志
-     `logger_level` | `Int` 0-5 整数, 提醒等级依次升高(DeBug->Info->Notice->Warning->Error->None)
-     `admin_id` |  `Int` Telegram 管理员的 `chat_id`, 目前用于发送性能调试数据
-     `group_settings` |  `Array` 配置QQ群组与Telegram群组的对应关系, 请按照示例添加
-     `database` |  `Array` MySQL数据库基本信息(后续可能会支持更多数据库)
-     `HTTP_proxy_host/port` |  `String/Int` HTTP代理, 用于请求Telegram服务器(不需要请留空host)
-     `http_timeout` |  `Int` 请求超时时间(秒)
-     `image_proxy` |  `String` QQ 图片服务器海外CDN (推荐CloudFlare)
-     `restart_count` |  `Int` 到达数目后退出进程, 若未设置进程守护请设置为无穷大(999999999999)
-     `image_provider_url` | `String` `webhook.php` 同级目录下的 `images` 目录访问地址
-     `image_folder` | `String` Telegram 图片的缓存文件夹
+2. 将`config\Config.example.php`改名为`config\Config.php`并根据提示及示例填写完整
 3. 安装酷Q(若要发送图片则要求安装Pro版本)以及[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件，并添加配置以下参数:
   - 酷Q:
-    - 更改登录模式为平板模式(可使电脑手机酷Q同时在线)
-      ```ini
-      [Debug]
-      Platform=2
-      ```
-  - HTTP API:
-    - use_ws_reverse :  使用反向 WebSocket 通讯
-    - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`ws_host`/`ws_port`
-    - host/port/use_http :  HTTP服务器设置，对应操作2中配置的`CQ_HTTP_url`
-      ```json
-                           {
-                               "use_ws_reverse":true,
-                               "ws_reverse_api_url":"ws://192.168.31.120:9501",
-                               "ws_reverse_event_url":"ws://192.168.31.120:9501",
-                               "host":"0.0.0.0",
-                               "port":5700,
-                               "use_http":true
-                           }
-      ```
+      - 更改登录模式为平板模式(**需要 Pro 版本**)
+        ```ini
+        [Debug]
+        Platform=2
+        ```
+    - HTTP API:
+      - use_ws_reverse :  使用反向 WebSocket 通讯
+      - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`ws_host`/`ws_port`
+      - host/port/use_http :  HTTP服务器设置，对应操作2中配置的`CQ_HTTP_url`
+        ```json
+        {
+            "use_ws_reverse":true,
+            "ws_reverse_api_url":"ws://192.168.31.120:9501",
+            "ws_reverse_event_url":"ws://192.168.31.120:9501",
+            "host":"0.0.0.0",
+            "port":5700,
+            "use_http":true
+        }
+        ```
 4. 确保您本地可访问 Telegram Bot API 服务器或填写好了`HTTP_proxy_host/port`(若不需要请留空)
 5. 确保您的PHP已安装了`swoole`扩展
 6. 进入目录, 输入```composer update```
-7. 输入```php run.php```
-8. 在网站环境中设置 `/public` 为运行目录
-9. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/webhook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
-10. 配置进程守护程序(**强烈建议**):
+7. 在网站环境中设置 `/public` 为运行目录并确保其中的 `images` 目录可写
+8. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/webhook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
+9. 配置进程守护程序(**强烈建议**):
 
     - Systemd
         ```ini
@@ -106,15 +88,17 @@
         [Install]
         WantedBy=multi-user.target
         ```
-11. 终端输入 ```service QQ2TG start```
-12. enjoy it
+10. 终端输入 ```service QQ2TG start```
+11. enjoy it
 
 - TG端发送消息:
-    1.私聊机器人并发送 `/new_chat`
-    2.选择要私聊的用户
-    3.回复机器人发出的消息
+    1. 私聊机器人并发送 `/new_chat`
+    2. 选择要私聊的用户
+    3. 回复机器人发出的消息
 
 ## 问题
+
+酷Q的平板登录模式需要 Pro 版本, 若不可不使用手机 QQ, 请另开小号进行操作, Pro 用户可实现 电脑 / 手机 / Bot 三端同时在线
 
 日志等级建议调至 2 或以上，否则可能会造成严重的消息延误
 

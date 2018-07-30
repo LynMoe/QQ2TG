@@ -133,7 +133,7 @@ class GroupMessage
             {
                 case 'at':
                     /**
-                     * 获取被@人群名片
+                     * 判断被@人是否为 Master
                      */
                     $master_id = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/get_login_info'),true)['data']['user_id'];
                     if ($master_id == $v['raw'])
@@ -141,6 +141,10 @@ class GroupMessage
                         $header .= "[@<a href=\"tg://user?id=" . CONFIG['admin_id'] . "\">您</a>]";
                         continue;
                     }
+
+                    /**
+                     * 获取被@人群名片
+                     */
                     $card = Storage::get_card($v['raw'],$data['group_id']);
                     $header .= "[@<a href=\"http://wpa.qq.com/msgrd?uin={$v['raw']}\">{$card}</a>]";
                     break;
