@@ -234,8 +234,8 @@ class Method
 
                 case 'sign':
                     $header .= @"[群签到]\n" .
-                        "{$cq_result['data']['title']}" .
-                        "<a href='{$cq_result['data']['image']}'>Media</a>" .
+                        "{$cq_result['data']['title']}\n" .
+                        "<a href='{$cq_result['data']['image']}'>Media</a>\n" .
                         "位置: {$cq_result['data']['location']}";
 
                     break;
