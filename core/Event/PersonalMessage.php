@@ -36,19 +36,19 @@ class PersonalMessage
          */
         if ($header == '')
         {
-            if ((!ctype_space($data['message'])) || (!empty($data['message'])))
+            if (ctype_space($data['message']) || empty($data['message']))
             {
-                $header = ": \n" . $header . "\n";
-            } else {
                 $header = ": \n" . $header;
+            } else {
+                $header = ": \n" . $header . "\n";
             }
         } else {
-            if ((!ctype_space($data['message'])) || (!empty($data['message'])))
+            if (ctype_space($data['message']) || empty($data['message']))
             {
-                $header = ": \n";
-            } else {
                 $header = '';
                 $data['message'] = '';
+            } else {
+                $header = ": \n";
             }
         }
 
