@@ -261,7 +261,7 @@ class Method
         /**
          * 获取CQ码类型和参数
          */
-        $code = str_replace("\r",'',str_replace("\n",'',str_replace("\t",'',json_decode($code,true))));
+        $code = str_replace("\r",'',str_replace("\n",'',str_replace("\t",'',$code)));
         $code = substr($code,0,strlen($code) - 1);
         $code_data = explode(',',$code);
 
