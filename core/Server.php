@@ -24,6 +24,8 @@ class Server
         $db->query("CREATE TABLE if not exists `user_info` (`id` int(11) PRIMARY KEY AUTO_INCREMENT,`user_id` bigint(20) NOT NULL,`qq_group_id` bigint(20) NOT NULL,`card` text,`flush_time` int(11) NOT NULL);");
         unset($db);
 
+        define('MASTER_ID',json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/get_login_info'),true)['data']['user_id']);
+
         /**
          * 新建WS服务器
          */

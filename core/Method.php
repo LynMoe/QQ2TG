@@ -11,7 +11,7 @@ require_once __DIR__ . '/../config/Config.php';
 class Method
 {
     /**
-     * 将表情 CQ 码转换为Emoji
+     * 将表情 CQ 码转换为 Emoji
      * @param $cq_code
      * @return string
      */
@@ -19,7 +19,7 @@ class Method
     {
         $emoji_list = '{"0":"😮","1":"😣","2":"😍","3":"😳","4":"😎","5":"😭","6":"☺","7":"😷","8":"😴","9":"😭","10":"😰","11":"😡","12":"😝","13":"😃","14":"🙂","15":"🙁","16":"🤓","18":"😤","19":"😨","20":"😏","21":"😊","22":"🙄","23":"😕","24":"🤤","25":"😪","26":"😨","27":"😓","28":"😬","29":"🤑","30":"👊","31":"😤","32":"🤔","33":"🤐","34":"😵","35":"😩","36":"👿","37":"💀","38":"🤕","39":"👋","50":"🙁","51":"🤓","53":"😤","54":"🤮","55":"😨","56":"😓","57":"😬","58":"🤑","73":"😏","74":"😊","75":"🙄","76":"😕","77":"🤤","78":"😪","79":"👊","80":"😤","81":"🤔","82":"🤐","83":"😵","84":"😩","85":"👿","86":"💀","87":"🤕","88":"👋","96":"😰","97":"😅","98":"🤥","99":"👏","100":"🤢","101":"😬","102":"😐","103":"😐","104":"😩","105":"😠","106":"😞","107":"😟","108":"😏","109":"😙","110":"😧","111":"🤠","172":"😜","173":"😭","174":"😶","175":"😉","176":"🤓","177":"😵","178":"😜","179":"💩","180":"😳","181":"🤓","182":"😂","183":"🤓","212":"😳"}';
         $emoji_list = json_decode($emoji_list,true);
-        if (isset($emoji_list[$cq_code])) return $emoji_list[$cq_code]; else return "未知表情";
+        if (isset($emoji_list[$cq_code])) return $emoji_list[$cq_code]; else return "[未知表情]";
     }
 
     /**
@@ -162,5 +162,123 @@ class Method
 
         self::curl("https://api.telegram.org/bot" . CONFIG['debug_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&text=" . urlencode("[{$level}]\n" . $message),false);
         return null;
+    }
+
+    public static function handle_cq_code($code_list,$message,$data)
+    {
+        $param['image'] = [];
+        $header = '';
+
+        foreach ($code_list as $value)
+        {
+            $cq_result = self::resolve_cq_code($value);
+
+            /**
+             * 将表情 CQ 码替换为 Emoji
+             */
+            if ($cq_result['type'] != 'face')
+            {
+                $message = str_replace($value,'',$message) . ' ';
+            } else {
+                $message = str_replace($value,Method::handle_emoji_cq_code($cq_result['data']['id']),$message) . ' ';
+            }
+
+            /**
+             * 筛选信息
+             */
+            switch ($cq_result['type'])
+            {
+                /**
+                 * 若要添加CQ码支持在此添加
+                 */
+
+                case 'at':
+                    /**
+                     * 判断被@人是否为 Master
+                     */
+                    if (MASTER_ID == $cq_result['data']['qq'])
+                    {
+                        $header .= "[@<a href=\"tg://user?id=" . CONFIG['admin_id'] . "\">您</a>]";
+                        continue;
+                    }
+
+                    /**
+                     * 获取被@人群名片
+                     */
+                    $card = Storage::get_card($cq_result['data']['qq'],$data['group_id']);
+                    $header .= "[@{$card}]";
+
+                    break;
+
+                case 'image':
+                    if (substr($cq_result['data']['file'],-3,3) == 'gif')
+                    {
+                        $header .= "[GIF]<a href='{$cq_result['data']['url']}'>链接</a>";
+                    } else {
+                        $param['image'][] = [
+                            'type' => 'photo',
+                            'media' => $url = str_replace('https://gchat.qpic.cn',CONFIG['image_proxy'],$cq_result['data']['url']),
+                        ];
+                    }
+
+                    break;
+
+                case 'share':
+                    $header .= @"[分享]\n" .
+                        "{$cq_result['data']['title']}\n" .
+                        "{$cq_result['data']['content']}\n" .
+                        "<a href='{$cq_result['data']['url']}'>链接</a>\n" .
+                        "<a href='{$cq_result['data']['image']}'>Media</a>";
+
+                    break;
+
+                case 'sign':
+                    $header .= @"[群签到]\n" .
+                        "{$cq_result['data']['title']}" .
+                        "<a href='{$cq_result['data']['image']}'>Media</a>" .
+                        "位置: {$cq_result['data']['location']}";
+
+                    break;
+
+                case 'rich':
+                    $header .= @"[富文本]\n" .
+                        "{$cq_result['data']['text']}\n" .
+                        "<a href='{$cq_result['data']['url']}'>链接</a>";
+
+                    break;
+            }
+        }
+
+        return [
+            'header' => $header,
+            'message' => $message,
+            'param' => $param,
+        ];
+    }
+
+    protected static function resolve_cq_code($code)
+    {
+        /**
+         * 获取CQ码类型和参数
+         */
+        $code = substr($code,0,strlen($code) - 1);
+        $code_data = explode(',',$code);
+
+        $result = [];
+
+        foreach ($code_data as $key => $value)
+        {
+            if ($key == 0)
+            {
+                $result['type'] = str_replace('[CQ:','',$code_data[0]);
+                continue;
+            }
+
+            $temp = explode('=',$value);
+
+            $result['data'][$temp[0]] = $temp[1];
+        }
+
+        return $result;
     }
 }

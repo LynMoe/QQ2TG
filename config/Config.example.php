@@ -65,7 +65,7 @@ define('CONFIG',[
     ],
 
     /**
-     * MySQL 数据库配置
+     * 数据库配置
      *
      * 目前仅支持 MySQL 及 MariaDB
      */
@@ -91,14 +91,13 @@ define('CONFIG',[
     'http_timeout' => 10.0,
 
     /**
-     * 用于加速 QQ 图片海外访问的 CDN (推荐CloudFlare)
-     * 可直接用这个
+     * 用于加速 QQ 图片海外访问的 CDN (推荐 CloudFlare )
+     * 若使用 CloudFlare 保持默认即可
      */
     'image_proxy' => 'http://qq_static_resource.illl.li',
 
     /**
      * 重启计数器
-     *
      * 消息个数达到后重启进程
      */
     'restart_count' => 10000,
