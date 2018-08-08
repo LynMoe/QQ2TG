@@ -32,21 +32,21 @@ class GroupMessage
         /**
          * 拼接用户名、CQ码以及消息正文
          */
-        if ($header == '')
+        if (!empty(($header)))
         {
-            if (ctype_space($data['message']) || empty($data['message']))
+            if (!empty($data['message']))
             {
-                $header = ": \n" . $header;
-            } else {
                 $header = ": \n" . $header . "\n";
+            } else {
+                $header = ": \n" . $header;
             }
         } else {
-            if (ctype_space($data['message']) || empty($data['message']))
+            if (!empty($data['message']))
             {
+                $header = ": \n";
+            } else {
                 $header = '';
                 $data['message'] = '';
-            } else {
-                $header = ": \n";
             }
         }
 
