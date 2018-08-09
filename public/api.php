@@ -9,6 +9,8 @@ require_once __DIR__ . '/../core/Storage.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../core/Method.php';
 
+error_reporting(0);
+
 if (!(isset($_GET['password']) && $_GET['password'] == CONFIG['web_password'])) die(json_encode(['status' => 403,'msg' => '无权操作']));
 
 if (isset($_GET['user_id']) && isset($_GET['group_id']) && isset($_GET['time']) && isset($_GET['page']) && isset($_GET['limit']))
@@ -71,7 +73,7 @@ if (isset($_GET['user_id']) && isset($_GET['group_id']) && isset($_GET['time']) 
                         break;
 
                     case 'share':
-                        $data[$key]['message'] = str_replace($item,'[分享]<br>' . $result['data']['title'] . '<br>' . $result['data']['content'] . '<br><img src="' . $result['data']['image'] . '"<br>' . '<a href="' . $result['data']['url'] . '">' . $result['data']['url'] . '</a>',$data[$key]['message']);
+                        $data[$key]['message'] = str_replace($item,'[分享]<br>' . @$result['data']['title'] . '<br>' . @$result['data']['content'] . '<br><img src="' . @$result['data']['image'] . '"<br>' . '<a href="' . @$result['data']['url'] . '">' . @$result['data']['url'] . '</a>',$data[$key]['message']);
                         break;
                 }
             }
