@@ -47,6 +47,7 @@ if (isset($_GET['user_id']) && isset($_GET['group_id']) && isset($_GET['time']) 
 
         foreach ($data as $key => $value)
         {
+            $data[$key]['user_id'] = Storage::get_card($data[$key]['user_id'],$data[$key]['qq_group_id']) . "[{$data[$key]['user_id']}]";
             preg_match_all("/\[CQ(.*?)\]/",$data[$key]['message'],$cq_code);
             $cq_code = $cq_code[0];
 
@@ -66,7 +67,7 @@ if (isset($_GET['user_id']) && isset($_GET['group_id']) && isset($_GET['time']) 
                         break;
 
                     case 'at':
-                        $data[$key]['message'] = str_replace($item,'[@' . $result['data']['qq'] . ']',$data[$key]['message']);
+                        $data[$key]['message'] = str_replace($item,'[@' . Storage::get_card($result['data']['qq'],$data[$key]['qq_group_id']) . '(' . $result['data']['qq'] . ')]',$data[$key]['message']);
                         break;
 
                     case 'face':
