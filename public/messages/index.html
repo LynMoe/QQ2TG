@@ -74,13 +74,15 @@
         </div>
     </div>
     <div class="mdui-center" style="width:100%;margin-top: 30px;margin-bottom: 120px;float: left">
+        <div class="mdui-progress" id="loading" style="display: none;">
+            <div class="mdui-progress-indeterminate"></div>
+        </div>
+        <br>
         <div class="mdui-row">
             <div class="mdui-col-xs-12" id="page_select">
             </div>
         </div>
-
-        <hr>
-
+        <br>
         <div class="mdui-table-fluid" id="table">
             <table class="mdui-table mdui-table-hoverable">
                 <thead>
@@ -167,6 +169,7 @@
     }
 
     function submit() {
+        document.getElementById('loading').style.display = 'block';
         $$.ajax({
             method: 'GET',
             url: '/api.php?password=' + password + '&user_id=' + user_id + '&group_id=' + group_id + '&time=' + time + '&limit=' + limit + '&page=' + page,
@@ -183,6 +186,7 @@
                         message: '请求失败, 错误信息: ' + data.msg
                     });
                 }
+                document.getElementById('loading').style.display = 'none';
             }
         });
     }
