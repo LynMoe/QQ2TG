@@ -255,7 +255,7 @@ class Method
         ];
     }
 
-    protected static function resolve_cq_code($code)
+    public static function resolve_cq_code($code)
     {
         /**
          * 获取CQ码类型和参数

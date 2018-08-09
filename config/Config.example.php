@@ -124,5 +124,10 @@ define('CONFIG',[
      * 本地用于储存 Telegram 图片的目录
      */
     'image_folder' => __DIR__ . '/../public/images/',
+
+    /**
+     * 网页消息查看器权限密钥
+     */
+    'web_password' => md5('123456'),
 ]);
 

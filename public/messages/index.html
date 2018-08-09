@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天记录查看器</title>
+    <meta name="viewport" content="width=device-width,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <link href="https://cdn.bootcss.com/mdui/0.4.0/css/mdui.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/mdui/0.4.0/js/mdui.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
+    <style>
+        img {
+            max-width: 100%;
+            max-height: 50%;
+        }
+    </style>
+    <style>body{font-family:Microsoft Yahei,serif;}.main{min-width:320px;max-width:1200px;margin-top:200px;}.submitButton{margin-top:20px;}@media only screen and (max-width:800px){.main{margin-top:80px;}}</style>
+</head>
+<body class="mdui-theme-primary-blue mdui-theme-accent-blue">
+<div class="mdui-container main">
+    <div class="mdui-center mdui-text-color-grey-800 mdui-text-center" style="float: left;width:100%;font-size: 35px;">
+        聊天记录查看器
+    </div>
+    <div class="mdui-center" style="width: 100%;float: left">
+        <div class="mdui-row">
+            <div class="mdui-col-xs-6 mdui-col-sm-4">
+                <div class="mdui-textfield">
+                    <input id="user_id" class="mdui-textfield-input" type="text" placeholder="QQ号" AUTOCOMPLETE="off"/>
+                </div>
+                <button type="submit" value="设置" onclick="set_user_id()" class="mdui-color-theme-accent mdui-ripple mdui-btn mdui-btn-raised mdui-center">
+                    设置
+                </button>
+            </div>
+            <div class="mdui-col-xs-6 mdui-col-sm-4">
+                <div class="mdui-textfield">
+                    <input id="group_id" class="mdui-textfield-input" type="text" placeholder="QQ群号" AUTOCOMPLETE="off"/>
+                </div>
+                <button type="submit" value="设置" onclick="set_group_id()" class="mdui-color-theme-accent mdui-ripple mdui-btn mdui-btn-raised mdui-center">
+                    设置
+                </button>
+            </div>
+            <div class="mdui-col-xs-6 mdui-col-sm-4">
+                <div class="mdui-textfield">
+                    <input id="time" class="mdui-textfield-input" type="datetime-local" placeholder="时间" AUTOCOMPLETE="off" value="2018-06-12T19:30"/>
+                </div>
+                <button type="submit" value="设置" onclick="set_time()" class="mdui-color-theme-accent mdui-ripple mdui-btn mdui-btn-raised mdui-center">
+                    设置
+                </button>
+            </div>
+            <div class="mdui-col-xs-6 mdui-col-sm-4">
+                <div class="mdui-textfield">
+                    <input id="limit" class="mdui-textfield-input" type="number" min="1" max="999" placeholder="每页显示个数" AUTOCOMPLETE="off" value="20"/>
+                </div>
+                <button type="submit" value="设置" onclick="set_limit()" class="mdui-color-theme-accent mdui-ripple mdui-btn mdui-btn-raised mdui-center">
+                    设置
+                </button>
+            </div>
+            <div class="mdui-col-xs-6 mdui-col-sm-4">
+                <div class="mdui-textfield">
+                    <input id="password" class="mdui-textfield-input" type="password" placeholder="权限密钥" AUTOCOMPLETE="off"/>
+                </div>
+                <button type="submit" value="设置" onclick="set_password()" class="mdui-color-theme-accent mdui-ripple mdui-btn mdui-btn-raised mdui-center">
+                    设置
+                </button>
+            </div>
+            <div class="mdui-col-xs-6 mdui-col-sm-4">
+                <button type="submit" value="搜索" onclick="search()" class="mdui-color-theme-accent mdui-btn-block mdui-ripple submitButton mdui-btn mdui-btn-raised mdui-center">
+                    搜索
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="mdui-center" style="width:100%;margin-top: 30px;float: left">
+        <div class="mdui-row">
+            <div class="mdui-col-xs-12" id="page_select">
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="mdui-table-fluid" id="table">
+            <table class="mdui-table mdui-table-hoverable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>QQ号</th>
+                    <th>QQ群号</th>
+                    <th>消息内容</th>
+                    <th>时间</th>
+                </tr>
+                </thead>
+                <tbody id="table_body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="" style="">
+</div>
+<script>
+    let $$ = mdui.JQ;
+    let user_id='',group_id='',limit,page=1,password='';
+
+    if (getCookie('password') != '')
+    {
+        document.getElementById('password').value = getCookie('password');
+        mdui.snackbar({message: '成功加载缓存密码'});
+    }
+
+    document.getElementById('time').value = timeConverter(Date.now()/1000,false);
+    set_time();
+    set_limit();
+
+    function set_user_id() {
+        user_id = document.getElementById('user_id').value;
+        mdui.snackbar({
+            message: 'QQ 号已设置为 ' + user_id
+        });
+    }
+
+    function set_group_id() {
+        group_id = document.getElementById('group_id').value;
+        mdui.snackbar({
+            message: 'QQ 群号已设置为 ' + group_id
+        });
+    }
+
+    function set_time() {
+        time = new Date(document.getElementById('time').value).getTime() / 1000;
+        mdui.snackbar({
+            message: '时间已设置为 ' + document.getElementById('time').value
+        });
+    }
+
+    function set_limit() {
+        limit = document.getElementById('limit').value;
+        mdui.snackbar({
+            message: '每页显示个数已设置为 ' + limit
+        });
+    }
+
+    function set_password() {
+        password = md5(document.getElementById('password').value);
+        setCookie('password',password,365);
+        mdui.snackbar({
+            message: '密钥已设置'
+        });
+    }
+
+    function search() {
+        page = 1;
+        submit();
+    }
+
+    function submit() {
+        $$.ajax({
+            method: 'GET',
+            url: 'https://qq2tg.xiaolin.in/api.php?password=' + password + '&user_id=' + user_id + '&group_id=' + group_id + '&time=' + time + '&limit=' + limit + '&page=' + page,
+            success: function (data) {
+                console.log(data = JSON.parse(data));
+                if (data.status == 100)
+                {
+                    document.getElementById('table_body').innerHTML = '';
+                    data.data.forEach(create_table);
+                    create_page_select_tab(data.total_count);
+                    mdui.updateTables(document.getElementById('table'));
+                } else {
+                    mdui.snackbar({
+                        message: '请求失败, 错误信息: ' + data.msg
+                    });
+                }
+            }
+        });
+    }
+
+    function create_table(item) {
+        document.getElementById('table_body').innerHTML = document.getElementById('table_body').innerHTML + '<tr><td>' + item.id + '</td><td>' + item.user_id + '</td><td>' + item.qq_group_id + '</td><td>' + item.message + '</td><td>' + timeConverter(item.time,true) + '</td></tr>';
+    }
+
+    function create_page_select_tab(total_count) {
+
+        document.getElementById('page_select').innerHTML = '';
+
+        for (let i = 1; i < ((total_count / limit) + 1); i ++)
+        {
+            if (i == page)
+            {
+                document.getElementById('page_select').innerHTML = document.getElementById('page_select').innerHTML + '<button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-color-theme-accent mdui-btn-raised mdui-ripple" disabled value="' + i + '" onclick="new_page(this);">' + i + '</button>';
+            } else {
+                document.getElementById('page_select').innerHTML = document.getElementById('page_select').innerHTML + '<button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-color-theme-accent mdui-btn-raised mdui-ripple" value="' + i + '" onclick="new_page(this);">' + i + '</button>';
+            }
+        }
+
+    }
+
+    function new_page(that) {
+        page = that.value;
+        submit();
+    }
+
+    function timeConverter(UNIX_timestamp,type){
+        let a = new Date(UNIX_timestamp * 1000);
+        let months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+        let year = a.getFullYear();
+        let month = months[a.getMonth()];
+        let date = a.getDate() < 10 ? '0' + a.getDate() : a.getDate();
+        let hour = a.getHours() < 10 ? '0' + a.getHours() : a.getHours();
+        let min = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes();
+
+
+        if (type === true)
+        {
+            var dtime = year + '-' + month + '-' + date + ' ' + hour + ':' + min ;
+        } else {
+            var dtime = year + '-' + month + '-' + date + 'T' + hour + ':' + '00' ;
+        }
+        return dtime;
+    }
+
+    function getCookie(cname)
+    {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++)
+        {
+            var c = ca[i].trim();
+            if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+        }
+        return "";
+    }
+
+    function setCookie(cname,cvalue,exdays)
+    {
+        var d = new Date();
+        d.setTime(d.getTime()+(exdays*24*60*60*1000));
+        var expires = "expires="+d.toGMTString();
+        document.cookie = cname + "=" + cvalue + "; " + expires;
+    }
+</script>
+</body>
+</html>
