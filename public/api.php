@@ -36,7 +36,7 @@ if (isset($_GET['user_id']) && isset($_GET['group_id']) && isset($_GET['time']) 
 
         $query_limit = 'LIMIT ' . ($limit * ($page - 1) + 1) . ',' . $limit;
 
-        $query = 'SELECT id,user_id,qq_group_id,message,time FROM messages_' . date('Ymd',$time) . ' WHERE time > ' . $time . $query . ' ' . $query_limit . 'ORDER BY id desc';
+        $query = 'SELECT id,user_id,qq_group_id,message,time FROM messages_' . date('Ymd',$time) . ' WHERE time > ' . $time . $query . ' ' . $query_limit . ' ORDER BY id desc';
 
         $data = json_decode(json_encode($db->query($query)),true);
 
