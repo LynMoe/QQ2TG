@@ -4,16 +4,9 @@
 ![qq2tg.png](https://i.loli.net/2018/07/22/5b543094633b6.png)
 
 ## 演示
-![Snipaste 2018-07-22 14-56-41.png](https://i.loli.net/2018/07/22/5b5430944d542.png)
-![Snipaste 2018-07-22 14-57-56.png](https://i.loli.net/2018/07/22/5b54309451a4b.png)
-![Snipaste 2018-07-22 14-58-53.png](https://i.loli.net/2018/07/26/5b58a0015f4a6.png)
-![Snipaste 2018-07-22 15-04-23.png](https://i.loli.net/2018/07/22/5b543093ec26d.png)
-![Snipaste 2018-07-22 15-05-43.png](https://i.loli.net/2018/07/22/5b5430940f0d7.png)
 
-## 现况
-
-说真的我现在已经不知道应该做什么了，感觉这个项目的已经到头了，几个问题到目前为止还没有什么好的解决方案(有些是酷Q的坑)
-要是各位有什么想法或者方案的话欢迎在 Telegram `@XiaoLin0815` 或者 QQ `845211975` 上骚扰我(讲道理issue也不是不行) ))
+![Snipaste 2018-08-09 15-11-13.png](https://i.loli.net/2018/08/09/5b6be92422320.png)
+![Snipaste 2018-08-09 14-23-51.png](https://i.loli.net/2018/08/09/5b6be81161b02.png)
 
 ## 灵感
 
@@ -21,13 +14,9 @@
 
 ## 简述
 
-这个程序主体使用`PHP`编写，依赖于拓展`swoole`，配合酷Q的[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件使用
+这个程序主体使用`PHP`编写, 依赖于拓展`swoole`, 配合酷Q的[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件使用
 
-目前还不是十分完善，可能存在消息转发不及时、各种报错，还请各位 dalao 指点一二
-
-```text
-联系了一下 coolq-http-api 插件的作者, 得知酷Q现在还不支持消息回复功能, 所以这个项目的原生群组消息回复的功能应该会无限期延长, 望谅解
-```
+目前还不是十分完善, 可能存在各种奇怪的问题, 还请各位 dalao 指点一二
 
 ## Feature
 
@@ -39,6 +28,7 @@
 - 支持 Telegram 端撤回 QQ 消息
 - 支持私聊 QQ 黑名单
 - 支持 Sticker 无损转发 (可以当 Sticker 转移机器人啦233
+- 附带 Web 端消息查看
 - 采用世界上最好的语言编写  ((日常拉仇恨
 
 实在编不出来了...  /滑稽
@@ -96,6 +86,11 @@
     2. 选择要私聊的用户
     3. 回复机器人发出的消息
 
+- Web 消息查看:
+    1. 在 Config.php 中设置好 `web_password`
+    2. 打开 `http(s)://<Your URL>/messages` 并将权限密钥填写完整
+    3. enjoy it
+
 ## 问题
 
 酷Q的平板登录模式需要 Pro 版本, 若不可不使用手机 QQ, 请另开小号进行操作, Pro 用户可实现 电脑 / 手机 / Bot 三端同时在线
@@ -117,6 +112,7 @@ QQ中的原创表情(不包括漫游表情等图片表情)暂未找到方法获�
 - ~~用户群名片缓存~~
 - ~~支持私聊消息~~
 - ~~支持消息撤回~~
+- 更新时自动更新配置
 - 解决文档中提到的问题
   - 消息错乱
   - 私聊消息 Timeout
@@ -133,7 +129,9 @@ dalao们如果有任何问题或者建议请在issue中提出或直接提交PR�
 
 ## 更新日志
 
-2018/08/09 新增 rich/sign CQ 码兼容
+2018/08/09 新增 Web 端消息查看
+
+2018/08/08 新增 rich/sign CQ 码兼容
 
 2018/07/27 新增日志记录
 
