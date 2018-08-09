@@ -107,7 +107,9 @@
     if (getCookie('password') != '')
     {
         document.getElementById('password').value = getCookie('password');
-        mdui.snackbar({message: '成功加载缓存密码'});
+        password = getCookie('password');
+        mdui.snackbar({message: '成功加载缓存密码',
+            timeout: 1500,});
     }
 
     document.getElementById('time').value = timeConverter(Date.now()/1000,false);
@@ -117,33 +119,42 @@
     function set_user_id() {
         user_id = document.getElementById('user_id').value;
         mdui.snackbar({
-            message: 'QQ 号已设置为 ' + user_id
+            message: 'QQ 号已设置为 ' + user_id,
+            timeout: 1500,
         });
     }
 
     function set_group_id() {
         group_id = document.getElementById('group_id').value;
         mdui.snackbar({
-            message: 'QQ 群号已设置为 ' + group_id
+            message: 'QQ 群号已设置为 ' + group_id,
+            timeout: 1500,
         });
     }
 
     function set_time() {
         time = new Date(document.getElementById('time').value).getTime() / 1000;
         mdui.snackbar({
-            message: '时间已设置为 ' + document.getElementById('time').value
+            message: '时间已设置为 ' + document.getElementById('time').value,
+            timeout: 1500,
         });
     }
 
     function set_limit() {
         limit = document.getElementById('limit').value;
         mdui.snackbar({
-            message: '每页显示个数已设置为 ' + limit
+            message: '每页显示个数已设置为 ' + limit,
+            timeout: 1500,
         });
     }
 
     function set_password() {
-        password = md5(document.getElementById('password').value);
+        if (document.getElementById('password').value.length === 32)
+        {
+            password = document.getElementById('password').value;
+        } else {
+            password = md5(document.getElementById('password').value);
+        }
         setCookie('password',password,365);
         mdui.snackbar({
             message: '密钥已设置'
