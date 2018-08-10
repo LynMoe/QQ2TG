@@ -146,6 +146,9 @@ class Personal
 
                 $url = $host . 'sendMediaGroup?chat_id=' . $data['data']['chat_id'] . '&media=' . urlencode(json_encode($data['data']['media']));
                 break;
+            case 'sendLocation':
+                $url = $host . 'sendLocation?chat_id=' . $data['data']['chat_id'] . '&latitude=' . $data['data']['latitude'] . '&longitude=' . $data['data']['longitude'];
+                break;
         }
 
         /**
