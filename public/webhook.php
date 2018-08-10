@@ -121,7 +121,9 @@ switch ($data['message']['chat']['type'])
         if (isset($data['message']['text'])) $message[] = ['type' => 'text','content' => $data['message']['text'],];
         if (isset($data['message']['sticker'])) $message[] = ['type' => 'photo','file_id' => $data['message']['sticker']['file_id'],'width' => $data['message']['sticker']['width'],];
         if (isset($data['message']['reply_to_message'])) $message[] = ['type' => 'reply','message_id' => $data['message']['reply_to_message']['message_id'],'tg_group_id' => $data['message']['reply_to_message']['chat']['id'],];
-        if (isset($data['message']['forward_from'])) $message[] = ['type' => 'forward','username' => $data['message']['forward_from']['username'],'nickname' => $data['message']['forward_from']['first_name'] . ' ' . $data['message']['forward_from']['last_name'],];
+        if (isset($data['message']['forward_from'])) $message[] = ['type' => 'forward_from_user','nickname' => $data['message']['forward_from']['first_name'] . ' ' . $data['message']['forward_from']['last_name'],];
+        if (isset($data['message']['forward_from_chat'])) $message[] = ['type' => 'forward_from_channel','nickname' => $data['message']['forward_from_chat']['title']];
+
 
         /**
          * 性能检测
@@ -193,8 +195,12 @@ switch ($data['message']['chat']['type'])
 
                     $send_message = "[回复给[CQ:at,qq={$result['user_id']}]: " . mb_substr($result['message'],0,20,'UTF-8') . "]\n" . $send_message;
                     break;
-                case 'forward':
-                    $send_message = "[转发自 " . $item['nickname'] . ")]\n" . $send_message;
+                case 'forward_from_user':
+                    $send_message = "[转发自用户 " . $item['nickname'] . ")]\n" . $send_message;
+                    break;
+                case 'forward_from_channel':
+                    $send_message = "[转发自频道 " . $item['nickname'] . ")]\n" . $send_message;
+                    break;
             }
         }
 
