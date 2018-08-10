@@ -12,7 +12,7 @@ require_once __DIR__ . '/Method.php';
  */
 function error_handler($error_level,$error_message,$error_file,$error_line,$error_context)
 {
-    $msg = "[Msg]{$error_message}\n[File]{$error_file}\n[Line]$error_line\n[Context]$error_context";
+    $msg = "[Msg]" . $error_message . "\n[File]" . json_encode($error_file) . "\n[Line]" . json_encode($error_line) . "\n[Context]" . json_encode($error_context);
     switch ($error_level)
     {
         case 2:
