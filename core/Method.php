@@ -245,6 +245,13 @@ class Method
                         "<a href='{$cq_result['data']['url']}'>链接</a>";
 
                     break;
+
+                case 'location':
+                    $param['location'] = [];
+                    $param['location']['lat'] = $cq_result['data']['lat'];
+                    $param['location']['lon'] = $cq_result['data']['lon'];
+
+                    break;
             }
         }
 

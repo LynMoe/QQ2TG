@@ -86,6 +86,17 @@ class Group
                     'qq_message_id' => $data['message_id'],
                 ]);
             }
+        } elseif (isset($param['location']['lat']))
+        {
+            self::curl([
+                'api' => 'sendLocation',
+                'data' => [
+                    'chat_id' => CONFIG['group_settings'][$data['group_id']]['chat_id'],
+                    'latitude' => $param['location']['lat'],
+                    'longitude' => $param['location']['lon'],
+                ],
+                'qq_message_id' => $data['message_id'],
+            ]);
         } else {
             /**
              * 直接发送消息
