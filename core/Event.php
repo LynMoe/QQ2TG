@@ -17,7 +17,7 @@ class Event
         switch ($data['message_type'])
         {
             case 'group':
-                foreach (CONFIG['group_settings'] as $key => $value)
+                foreach (CONFIG['group'] as $key => $value)
                 {
                     if ($key == $data['group_id'])
                     {

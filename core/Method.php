@@ -60,7 +60,7 @@ class Method
      */
     public static function request_name($user_id)
     {
-        $friends_list = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/_get_friend_list'),true)['data'];
+        $friends_list = json_decode(file_get_contents(CONFIG['coolq']['http_url'] . '/_get_friend_list'),true)['data'];
 
         foreach ($friends_list as $item)
         {
@@ -72,7 +72,7 @@ class Method
                 }
             }
         }
-        return json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/get_stranger_info?user_id=' . $user_id),true)['data']['nickname'];
+        return json_decode(file_get_contents(CONFIG['coolq']['http_url'] . '/get_stranger_info?user_id=' . $user_id),true)['data']['nickname'];
     }
 
     /**
@@ -108,9 +108,9 @@ class Method
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        if (!empty(CONFIG['HTTP_proxy_host'])) curl_setopt ($ch, CURLOPT_PROXY, CONFIG['HTTP_proxy_host'] . ':' . CONFIG['HTTP_proxy_port']);
+        if (!empty(CONFIG['proxy']['host'])) curl_setopt ($ch, CURLOPT_PROXY, CONFIG['proxy']['host'] . ':' . CONFIG['proxy']['port']);
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
-        curl_setopt ($ch, CURLOPT_TIMEOUT, CONFIG['http_timeout']);
+        curl_setopt ($ch, CURLOPT_TIMEOUT, CONFIG['program']['timeout']);
 
         $headers = array();
         $headers[] = "Connection: keep-alive";
@@ -141,7 +141,7 @@ class Method
      */
     public static function log($level,$message)
     {
-        if (CONFIG['logger_level'] > $level) return null;
+        if (CONFIG['log']['level'] > $level) return null;
         switch ($level)
         {
             case 0:
@@ -160,7 +160,7 @@ class Method
                 $level = 'ERROR';
         }
 
-        self::curl("https://api.telegram.org/bot" . CONFIG['debug_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&text=" . urlencode("[{$level}]\n" . $message),false);
+        self::curl("https://api.telegram.org/bot" . CONFIG['bot']['debug'] . "/sendMessage?chat_id=" . CONFIG['admin']['chat_id'] . "&text=" . urlencode("[{$level}]\n" . $message),false);
         return null;
     }
 
@@ -198,7 +198,7 @@ class Method
                      */
                     if (MASTER_ID == $cq_result['data']['qq'])
                     {
-                        $header .= "[@<a href=\"tg://user?id=" . CONFIG['admin_id'] . "\">您</a>]";
+                        $header .= "[@<a href=\"tg://user?id=" . CONFIG['admin']['chat_id'] . "\">您</a>]";
                         continue;
                     }
 
@@ -217,7 +217,7 @@ class Method
                     } else {
                         $param['image'][] = [
                             'type' => 'photo',
-                            'media' => $url = str_replace('https://gchat.qpic.cn',CONFIG['image_proxy'],$cq_result['data']['url']),
+                            'media' => $url = str_replace('https://gchat.qpic.cn',CONFIG['image']['proxy'],$cq_result['data']['url']),
                         ];
                     }
 

@@ -17,7 +17,7 @@ class PersonalMessage
      */
     public static function handler($data)
     {
-        if (in_array($data['user_id'],CONFIG['blocked_qq'])) return;
+        if (in_array($data['user_id'],CONFIG['blocked']['qq'])) return;
 
         /**
          * 匹配所有CQ码

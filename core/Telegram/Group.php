@@ -34,7 +34,7 @@ class Group
                 $param['image']['media'] = Storage::get_file_id($qq_file_id,$param['image']['media']);
 
                 $message = [
-                    'chat_id' => CONFIG['group_settings'][$data['group_id']]['chat_id'],
+                    'chat_id' => CONFIG['group'][$data['group_id']],
                     'media' => $param['image'],
                 ];
 
@@ -66,7 +66,7 @@ class Group
                 }
 
                 $message = [
-                    'chat_id' => CONFIG['group_settings'][$data['group_id']]['chat_id'],
+                    'chat_id' => CONFIG['group'][$data['group_id']],
                     'media' => $param['image'],
                 ];
 
@@ -91,7 +91,7 @@ class Group
             self::curl([
                 'api' => 'sendLocation',
                 'data' => [
-                    'chat_id' => CONFIG['group_settings'][$data['group_id']]['chat_id'],
+                    'chat_id' => CONFIG['group'][$data['group_id']],
                     'latitude' => $param['location']['lat'],
                     'longitude' => $param['location']['lon'],
                 ],
@@ -104,7 +104,7 @@ class Group
             self::curl([
                 'api' => 'sendMessage',
                 'data' => [
-                    'chat_id' => CONFIG['group_settings'][$data['group_id']]['chat_id'],
+                    'chat_id' => CONFIG['group'][$data['group_id']],
                     'text' => $data['message'],
                     'parse_mode' => 'HTML',
                     'disable_web_page_preview' => false,
@@ -116,7 +116,7 @@ class Group
 
     private static function curl($data)
     {
-        $host = '/bot' . CONFIG['bot_token'] . '/';
+        $host = '/bot' . CONFIG['bot']['message'] . '/';
 
         /**
          * 判断消息类型
@@ -171,7 +171,7 @@ class Group
         /**
          * 设置代理
          */
-        if (!empty(CONFIG['HTTP_proxy_host'])) $cli->set(['timeout' => CONFIG['http_timeout'],'http_proxy_host' => CONFIG['HTTP_proxy_host'],'http_proxy_port' => CONFIG['HTTP_proxy_port'],]); $cli->set(['timeout' => CONFIG['http_timeout'],]);
+        if (!empty(CONFIG['proxy']['host'])) $cli->set(['timeout' => CONFIG['program']['timeout'],'http_proxy_host' => CONFIG['proxy']['host'],'http_proxy_port' => CONFIG['proxy']['port'],]); $cli->set(['timeout' => CONFIG['program']['timeout'],]);
 
         /**
          * 设置请求头

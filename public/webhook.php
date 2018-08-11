@@ -18,8 +18,8 @@ require_once __DIR__ . '/../core/Method.php';
 /**
  * 检测目录是否存在与读写权限
  */
-if (!is_dir(CONFIG['image_folder'])) {if (mkdir(CONFIG['image_folder'])) Method::log(1,'创建图片目录成功'); Method::log(3,'创建图片目录失败');}
-if (!is_writable(CONFIG['image_folder'])) Method::log(3,'Master快去检查一下图片储存目录的读写吧~ (' . CONFIG['image_folder'] . ')');
+if (!is_dir(CONFIG['image']['folder'])) {if (mkdir(CONFIG['image']['folder'])) Method::log(1,'创建图片目录成功'); Method::log(3,'创建图片目录失败');}
+if (!is_writable(CONFIG['image']['folder'])) Method::log(3,'Master 快去检查一下图片储存目录的读写权限喵~ (' . CONFIG['image']['folder'] . ')');
 
 /**
  * 获取TG回调消息
@@ -31,7 +31,7 @@ Method::log(0,'WebHook Receive Data: ' . json_encode($data));
 /**
  * 判断操作人是不是 Bot 管理员
  */
-if (!((@$data['callback_query']['from']['id'] == CONFIG['admin_id']) || (@$data['message']['from']['id'] == CONFIG['admin_id'])))
+if (!((@$data['callback_query']['from']['id'] == CONFIG['admin']['chat_id']) || (@$data['message']['from']['id'] == CONFIG['admin']['chat_id'])))
 {
     die;
 }
@@ -45,17 +45,17 @@ if (isset($data['callback_query']['data']))
     switch ($return['type'])
     {
         case 'recall':
-            $qq_return = json_decode($raw = file_get_contents(CONFIG['CQ_HTTP_url'] . '/delete_msg?message_id=' . $return['msg_id']),true);
+            $qq_return = json_decode($raw = file_get_contents(CONFIG['coolq']['http_url'] . '/delete_msg?message_id=' . $return['msg_id']),true);
 
             /**
              * 判断是否为私聊消息
              */
-            if ($data['callback_query']['message']['chat']['id'] == CONFIG['admin_id'])
+            if ($data['callback_query']['message']['chat']['id'] == CONFIG['admin']['chat_id'])
             {
                 /**
                  * 更改消息内容
                  */
-                Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔵撤回状态未知(仍有两分钟限制)'));
+                Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔵撤回状态未知(仍有两分钟限制)'));
 
                 break;
             }
@@ -67,7 +67,7 @@ if (isset($data['callback_query']['data']))
                 /**
                  * 更改消息内容
                  */
-                Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🚫消息未撤回(两分钟已过)'));
+                Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🚫消息未撤回(两分钟已过)'));
 
                 break;
             }
@@ -75,7 +75,7 @@ if (isset($data['callback_query']['data']))
             /**
              * 更改消息内容
              */
-            Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔙消息已撤回'));
+            Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('🔙消息已撤回'));
 
             break;
 
@@ -84,7 +84,7 @@ if (isset($data['callback_query']['data']))
             /**
              * 更改消息内容
              */
-            Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('📤请直接回复该消息发起私聊'));
+            Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/editMessageText?chat_id={$data['callback_query']['message']['chat']['id']}&message_id={$data['callback_query']['message']['message_id']}&text=" . urlencode('📤请直接回复该消息发起私聊'));
             break;
     }
     die;
@@ -107,9 +107,9 @@ switch ($data['message']['chat']['type'])
         /**
          * 获取QQ群信息
          */
-        foreach (CONFIG['group_settings'] as $key => $value)
+        foreach (CONFIG['group'] as $key => $value)
         {
-            if ($value['chat_id'] === $chat_id) $qq_group = $key;
+            if ($value == $chat_id) $qq_group = $key;
         }
         if ($qq_group === 0) die;
 
@@ -149,7 +149,7 @@ switch ($data['message']['chat']['type'])
                      * 添加图片
                      */
                     Storage::save_telegram_image($item['file_id']);
-                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . $item['file_id'] . '.png]';
+                    $send_message .= '[CQ:image,file=' . CONFIG['image']['url'] . $item['file_id'] . '.png]';
 
                     /**
                      * 性能检测
@@ -211,12 +211,12 @@ switch ($data['message']['chat']['type'])
         /**
          * 发送消息
          */
-        $qq_result = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message)),true);
+        $qq_result = json_decode(file_get_contents(CONFIG['coolq']['http_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message)),true);
 
         /**
          * Log
          */
-        Method::log(0,'Request CoolQ: ' . CONFIG['CQ_HTTP_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message));
+        Method::log(0,'Request CoolQ: ' . CONFIG['coolq']['http_url'] . '/send_group_msg?group_id=' . $qq_group . '&message=' . urlencode($send_message));
         Method::log(0,'CoolQ Return: ' . json_encode($qq_result));
 
         /**
@@ -227,7 +227,7 @@ switch ($data['message']['chat']['type'])
         /**
          * Telegram 撤回按钮
          */
-        error_log('Telegram Result: ' . Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id={$chat_id}&reply_to_message_id={$tg_message_id}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+        error_log('Telegram Result: ' . Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/sendMessage?chat_id={$chat_id}&reply_to_message_id={$tg_message_id}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
                 'inline_keyboard' => [[
                     [
                         'text' => '❌ReCall',
@@ -248,7 +248,7 @@ switch ($data['message']['chat']['type'])
         {
             $friends = [];
 
-            foreach (json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/_get_friend_list'),true)['data'] as $item)
+            foreach (json_decode(file_get_contents(CONFIG['coolq']['http_url'] . '/_get_friend_list'),true)['data'] as $item)
             {
                 foreach ($item['friends'] as $key => $value)
                 {
@@ -261,7 +261,7 @@ switch ($data['message']['chat']['type'])
                 }
             }
 
-            Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('🙋好友列表') . "&reply_markup=" . json_encode([
+            Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/sendMessage?chat_id=" . CONFIG['admin']['chat_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('🙋好友列表') . "&reply_markup=" . json_encode([
                     'inline_keyboard' => [$friends],
                 ]));
 
@@ -302,7 +302,7 @@ switch ($data['message']['chat']['type'])
                      * 添加图片
                      */
                     Storage::save_telegram_image($item['file_id']);
-                    $send_message .= '[CQ:image,file=' . CONFIG['image_provider_url'] . $item['file_id'] . '.png]';
+                    $send_message .= '[CQ:image,file=' . CONFIG['image']['url'] . $item['file_id'] . '.png]';
 
                     /**
                      * 性能检测
@@ -319,12 +319,12 @@ switch ($data['message']['chat']['type'])
         /**
          * 发送消息
          */
-        $qq_result = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/send_private_msg?user_id=' . $qq_user_id . '&message=' . urlencode($send_message)),true);
+        $qq_result = json_decode(file_get_contents(CONFIG['coolq']['http_url'] . '/send_private_msg?user_id=' . $qq_user_id . '&message=' . urlencode($send_message)),true);
 
         /**
          * Log
          */
-        Method::log(0,'Request CoolQ: ' . CONFIG['CQ_HTTP_url'] . '/send_private_msg?user_id=' . $qq_user_id . '&message=' . urlencode($send_message));
+        Method::log(0,'Request CoolQ: ' . CONFIG['coolq']['http_url'] . '/send_private_msg?user_id=' . $qq_user_id . '&message=' . urlencode($send_message));
         Method::log(0,'CoolQ Return: ' . json_encode($qq_result));
 
         /**
@@ -335,7 +335,7 @@ switch ($data['message']['chat']['type'])
         /**
          * Telegram 撤回按钮
          */
-        error_log('Telegram Result: ' . Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/sendMessage?chat_id=" . CONFIG['admin_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+        error_log('Telegram Result: ' . Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/sendMessage?chat_id=" . CONFIG['admin']['chat_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
                 'inline_keyboard' => [[
                     [
                         'text' => '❌ReCall',

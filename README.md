@@ -30,6 +30,7 @@
 - 支持 Sticker 无损转发 (可以当 Sticker 转移机器人啦233
 - 附带 Web 端消息查看
 - 支持位置信息发送与接收
+- 机器人在线时手机电脑可同时在线
 - 采用世界上最好的语言编写  ((日常拉仇恨
 
 实在编不出来了...  /滑稽
@@ -91,6 +92,37 @@
     1. 在 Config.php 中设置好 `web_password`
     2. 打开 `http(s)://<Your URL>/messages` 并将权限密钥填写完整
     3. enjoy it
+
+## 配置安全 (**极为重要!**)
+
+- Nginx:
+    ```nginx
+        location ~ (^\.|/\.) {
+            return 403;
+        }
+    ```
+
+- Apache:
+    ```apacheconfig
+    RewriteEngine On
+    RewriteRule (^\.|/\.) - [F]
+    ```
+
+- IIS:
+    ```xml
+    <configuration>
+      <system.webServer>
+        <rewrite>
+          <rules>
+            <rule name="Block access to dotfiles">
+              <match url="(^\.|/\.)" ignoreCase="false" />
+              <action type="CustomResponse" statusCode="403" statusReason="Forbidden" />
+            </rule>
+          </rules>
+        </rewrite>
+      </system.webServer>
+    </configuration>
+    ```
 
 ## 问题
 

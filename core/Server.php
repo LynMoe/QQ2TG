@@ -24,12 +24,12 @@ class Server
         $db->query("CREATE TABLE if not exists `user_info` (`id` int(11) PRIMARY KEY AUTO_INCREMENT,`user_id` bigint(20) NOT NULL,`qq_group_id` bigint(20) NOT NULL,`card` text,`flush_time` int(11) NOT NULL);");
         unset($db);
 
-        define('MASTER_ID',json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . '/get_login_info'),true)['data']['user_id']);
+        define('MASTER_ID',json_decode(file_get_contents(CONFIG['coolq']['http_url'] . '/get_login_info'),true)['data']['user_id']);
 
         /**
          * 新建WS服务器
          */
-        $server = new swoole_websocket_server(CONFIG['ws_host'], CONFIG['ws_port']);
+        $server = new swoole_websocket_server(CONFIG['websocket']['host'], CONFIG['websocket']['port']);
 
         /**
          * 与客户端握手时通知
@@ -44,7 +44,7 @@ class Server
          */
         $server->on('Message', function (swoole_websocket_server $server, $frame) use($int) {
             global $int;
-            if (($int = $int + 1) >= CONFIG['restart_count']) exit("\n\n计数达到 " . $int . " , 结束进程\n\n");
+            if (($int = $int + 1) >= CONFIG['program']['restart_count']) exit("\n\n计数达到 " . $int . " , 结束进程\n\n");
             echo "-----------[{$int}]----------\n";
             $data = json_decode($frame->data,true);
 

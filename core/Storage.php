@@ -70,7 +70,7 @@ class Storage
      */
     private static function get_new_card($user_id,$qq_group_id)
     {
-        $data = json_decode(file_get_contents(CONFIG['CQ_HTTP_url'] . "/get_group_member_info?group_id={$qq_group_id}&user_id={$user_id}"),true)['data'];
+        $data = json_decode(file_get_contents(CONFIG['coolq']['http_url'] . "/get_group_member_info?group_id={$qq_group_id}&user_id={$user_id}"),true)['data'];
         $retry = 0;
         do {
             $retry += 1;
@@ -260,12 +260,12 @@ class Storage
      */
     public static function save_telegram_image($file_id)
     {
-        $filename = CONFIG['image_folder'] . '/' . $file_id;
+        $filename = CONFIG['image']['folder'] . '/' . $file_id;
 
         if (file_exists($filename . '.png')) return null;
 
-        $file_path = json_decode(Method::curl("https://api.telegram.org/bot" . CONFIG['bot_token'] . "/getFile?file_id=" . $file_id),true)['result']['file_path'];
-        $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot_token'] . "/" . $file_path;
+        $file_path = json_decode(Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/getFile?file_id=" . $file_id),true)['result']['file_path'];
+        $photo_url = "https://api.telegram.org/file/bot" . CONFIG['bot']['message'] . "/" . $file_path;
 
         file_put_contents($filename,Method::curl($photo_url));
 

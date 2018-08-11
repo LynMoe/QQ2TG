@@ -11,7 +11,7 @@ require_once __DIR__ . '/../core/Method.php';
 
 error_reporting(0);
 
-if (!(isset($_GET['password']) && $_GET['password'] == CONFIG['web_password'])) die(json_encode(['status' => 403,'msg' => '无权操作']));
+if (!(isset($_GET['password']) && $_GET['password'] == CONFIG['program']['password'])) die(json_encode(['status' => 403,'msg' => '无权操作']));
 
 if (isset($_GET['user_id']) && isset($_GET['group_id']) && isset($_GET['time']) && isset($_GET['page']) && isset($_GET['limit']))
 {
@@ -58,7 +58,7 @@ if (isset($_GET['user_id']) && isset($_GET['group_id']) && isset($_GET['time']) 
                 switch ($result['type'])
                 {
                     case 'image':
-                        $result['data']['url'] = str_replace('https://gchat.qpic.cn',CONFIG['image_proxy'],$result['data']['url']);
+                        $result['data']['url'] = str_replace('https://gchat.qpic.cn',CONFIG['photo']['proxy'],$result['data']['url']);
                         $data[$key]['message'] = str_replace($item,'<img src="' . $result['data']['url'] . '">',$data[$key]['message']);
                         break;
 
