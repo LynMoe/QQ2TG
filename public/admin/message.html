@@ -172,7 +172,7 @@
         document.getElementById('loading').style.display = 'block';
         $$.ajax({
             method: 'GET',
-            url: '/message_api.php?password=' + password + '&user_id=' + user_id + '&group_id=' + group_id + '&time=' + time + '&limit=' + limit + '&page=' + page,
+            url: '../message_api.php?password=' + password + '&user_id=' + user_id + '&group_id=' + group_id + '&time=' + time + '&limit=' + limit + '&page=' + page,
             success: function (data) {
                 console.log(data = JSON.parse(data));
                 if (data.status == 100)
