@@ -202,6 +202,12 @@ class Method
                         continue;
                     }
 
+                    if ($cq_result['data']['qq'] == 'all')
+                    {
+                        $header .= "[@<a href=\"tg://user?id=" . CONFIG['admin']['chat_id'] . "\">全体成员</a>]";
+                        continue;
+                    }
+
                     /**
                      * 获取被@人群名片
                      */
