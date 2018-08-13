@@ -7,4 +7,10 @@
  */
 
 if (!file_exists(__DIR__ . '/../config/.env')) die('请先完成设置');
-define('CONFIG',array_merge(parse_ini_file(__DIR__ . '/../config/.env.example',true),parse_ini_file(__DIR__ . '/../config/.env',true)));
+$config = array_merge(parse_ini_file(__DIR__ . '/../config/.env.example',true),parse_ini_file(__DIR__ . '/../config/.env',true));
+define('CONFIG',array_merge($config,[
+    'image' => [
+        'folder' => __DIR__ . $config['image']['folder'],
+    ],
+]));
+unset($config);
