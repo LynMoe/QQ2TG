@@ -2,3 +2,5 @@ config/Config.php
 WebHook/Logs/
 composer.lock
 .idea/
+config/.env
+vendor/
