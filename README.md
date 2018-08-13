@@ -34,7 +34,7 @@
 ## 使用
 
 1. 将代码拖到本地 :  ```git clone https://github.com/XiaoLin0815/QQ2TG.git```
-2. 将`config\Config.example.php`改名为`config\Config.php`并根据提示及示例填写完整
+2. 将`config\.env.example`改名为`config\.env`并根据提示及示例填写完整
 3. 安装酷Q(若要发送图片则要求安装Pro版本)以及[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件，并添加配置以下参数:
   - 酷Q:
       - 更改登录模式为平板模式
@@ -59,7 +59,7 @@
 4. 确保您本地可访问 Telegram Bot API 服务器或填写好了`proxy -> host/port`(若不需要请留空)
 5. 确保您的PHP已安装了`swoole`扩展
 6. 进入目录, 输入```composer update```
-7. 在网站环境中设置 `/public` 为运行目录并确保其中的 `images` 目录可写
+7. 在网站环境中设置 `public/` 为运行目录并确保其中的 `images` 目录可写
 8. 访问 `https://api.telegram.org/bot<bot_token>/setWebHook?url=https://<Your_URL>/webhook.php` 设置WebHook, 若认为不安全, 可自行改变文件名
 9. 配置进程守护程序(**强烈建议**):
 
@@ -85,10 +85,9 @@
     3. 回复机器人发出的消息开始私聊
 
 - Web 消息查看:
-    1. 设置 `public/` 为网站运行目录
-    2. 在 Config.php 中设置好 `program -> password`
-    3. 打开 `http(s)://<Your URL>/admin/message.html` 并将权限密钥填写完整
-    4. enjoy it
+    1. 在 Config.php 中设置好 `program -> password`
+    2. 打开 `http(s)://<Your URL>/admin/message.html` 并将权限密钥填写完整
+    3. enjoy it
 
 ## 配置安全 (**极为重要!**)
 
@@ -123,7 +122,7 @@
 
 ## 问题
 
-**本项目仅支持 酷 Q Pro 版本, 若使用 Air 或 Lite 版的用户请寻找其它项目**
+**本项目仅对 酷 Q Pro 版本提供支持, 对使用 Air 或 Lite 的用户不提供技术支持**
 
 日志等级建议调至 2 或以上，否则可能会造成严重的消息延误
 
