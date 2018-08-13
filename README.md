@@ -8,13 +8,9 @@
 ![Snipaste 2018-08-09 15-11-13.png](https://i.loli.net/2018/08/09/5b6be92422320.png)
 ![Snipaste 2018-08-09 14-23-51.png](https://i.loli.net/2018/08/09/5b6be81161b02.png)
 
-## 灵感
-
-最近新入手了一台万普拉斯，艹了几天之后发现除了屏幕外就是QQ最耗电了，几乎占了7%，再加上以前就有这个念头，又正好是暑假，就挖了这个无底洞
-
 ## 简述
 
-这个程序主体使用`PHP`编写, 依赖于拓展`swoole`, 配合酷Q的[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件使用
+程序主体使用`PHP`编写, 依赖于拓展`swoole`, 配合酷Q的[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件使用
 
 目前还不是十分完善, 可能存在各种奇怪的问题, 还请各位 dalao 指点一二
 
@@ -41,15 +37,15 @@
 2. 将`config\Config.example.php`改名为`config\Config.php`并根据提示及示例填写完整
 3. 安装酷Q(若要发送图片则要求安装Pro版本)以及[coolq-http-api](https://github.com/richardchien/coolq-http-api)插件，并添加配置以下参数:
   - 酷Q:
-      - 更改登录模式为平板模式(**需要 Pro 版本**)
+      - 更改登录模式为平板模式
         ```ini
         [Debug]
         Platform=2
         ```
     - HTTP API:
       - use_ws_reverse :  使用反向 WebSocket 通讯
-      - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`ws_host`/`ws_port`
-      - host/port/use_http :  HTTP服务器设置，对应操作2中配置的`CQ_HTTP_url`
+      - ws_reverse_api_url/ws_reverse_event_url ： 反向WS服务器地址，对应操作2中配置的`websocket -> host/port`
+      - host/port/use_http :  HTTP服务器设置，对应操作2中配置的`coolq -> http_url`
         ```json
         {
             "use_ws_reverse":true,
@@ -60,7 +56,7 @@
             "use_http":true
         }
         ```
-4. 确保您本地可访问 Telegram Bot API 服务器或填写好了`HTTP_proxy_host/port`(若不需要请留空)
+4. 确保您本地可访问 Telegram Bot API 服务器或填写好了`proxy -> host/port`(若不需要请留空)
 5. 确保您的PHP已安装了`swoole`扩展
 6. 进入目录, 输入```composer update```
 7. 在网站环境中设置 `/public` 为运行目录并确保其中的 `images` 目录可写
@@ -86,20 +82,21 @@
 - TG端发送消息:
     1. 私聊机器人并发送 `/new_chat`
     2. 选择要私聊的用户
-    3. 回复机器人发出的消息
+    3. 回复机器人发出的消息开始私聊
 
 - Web 消息查看:
-    1. 在 Config.php 中设置好 `web_password`
-    2. 打开 `http(s)://<Your URL>/messages` 并将权限密钥填写完整
-    3. enjoy it
+    1. 设置 `public/` 为网站运行目录
+    2. 在 Config.php 中设置好 `program -> password`
+    3. 打开 `http(s)://<Your URL>/admin/message.html` 并将权限密钥填写完整
+    4. enjoy it
 
 ## 配置安全 (**极为重要!**)
 
 - Nginx:
     ```nginx
-        location ~ (^\.|/\.) {
-            return 403;
-        }
+    location ~ (^\.|/\.) {
+        return 403;
+    }
     ```
 
 - Apache:
@@ -126,17 +123,13 @@
 
 ## 问题
 
-酷Q的平板登录模式需要 Pro 版本, 若不可不使用手机 QQ, 请另开小号进行操作, Pro 用户可实现 电脑 / 手机 / Bot 三端同时在线
+**本项目仅支持 酷 Q Pro 版本, 若使用 Air 或 Lite 版的用户请寻找其它项目**
 
 日志等级建议调至 2 或以上，否则可能会造成严重的消息延误
 
 由于 Telegram 的特殊性，所有由 QQ 转发至 Telegram 的 GIF 图像都会以链接的方式发送，至于客户端能不能自动解析显示就要看运气了 /滑稽
 
 若要在 Linux 上使用 酷Q , 可参考[这里](https://github.com/CoolQ/docker-wine-coolq)
-
-现在可能会出现消息**错乱**等情况(比如 QQ 在图片后的消息会在 TG 出现在图片前)   ((没思路, 求PR
-
-QQ中的原创表情(不包括漫游表情等图片表情)暂未找到方法获取，若找到方法会添加的
 
 ## TODO
 
@@ -146,13 +139,11 @@ QQ中的原创表情(不包括漫游表情等图片表情)暂未找到方法获�
 - ~~支持私聊消息~~
 - ~~支持消息撤回~~
 - 更新时自动更新配置
-- 解决文档中提到的问题
-  - 消息错乱
-  - 私聊消息 Timeout
+- ~~解决文档中提到的问题~~
   - ~~从 Telegram 端发起私聊~~
 - ~~更多CQ码兼容~~
 
-dalao们如果有任何问题或者建议请在issue中提出或直接提交PR，感谢万分
+dalao 们如果有任何问题或者建议请在issue中提出或直接提交PR，感谢万分
 
 ## 题外话
 
@@ -161,6 +152,8 @@ dalao们如果有任何问题或者建议请在issue中提出或直接提交PR�
 或许真的要像[LWL](https://lwl.moe)说的那样`变得更优秀`吧
 
 ## 更新日志
+
+2018/08/11 完全重构配置调用方式
 
 2018/08/10 支持位置信息发送与接收
 
