@@ -160,7 +160,7 @@ class Method
                 $level = 'ERROR';
         }
 
-        self::curl("https://api.telegram.org/bot" . CONFIG['bot']['debug'] . "/sendMessage?chat_id=" . CONFIG['admin']['chat_id'] . "&text=" . urlencode("[{$level}]\n" . $message),false);
+        self::curl("https://api.telegram.org/bot" . CONFIG['bot']['debug'] . "/sendMessage?chat_id=" . CONFIG['admin']['send_to'] . "&text=" . urlencode("[{$level}]\n" . $message),false);
         return null;
     }
 
