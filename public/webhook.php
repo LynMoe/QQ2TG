@@ -50,7 +50,7 @@ if (isset($data['callback_query']['data']))
             /**
              * 判断是否为私聊消息
              */
-            if ($data['callback_query']['message']['chat']['id'] == CONFIG['admin']['chat_id'])
+            if ($data['callback_query']['message']['chat']['id'] == CONFIG['admin']['send_to'])
             {
                 /**
                  * 更改消息内容
@@ -95,7 +95,13 @@ if (isset($data['callback_query']['data']))
  */
 switch ($data['message']['chat']['type'])
 {
+    case 'supergroup':
+        goto group;
+        break;
+
     case 'group':
+        group:
+        if ($data['message']['chat']['id'] == CONFIG['admin']['send_to']) goto personal;
         /**
          * 初始化参数
          */
@@ -238,7 +244,7 @@ switch ($data['message']['chat']['type'])
         break;
 
     case 'private':
-
+        personal:
         /**
          * 初始化参数
          */
@@ -335,7 +341,7 @@ switch ($data['message']['chat']['type'])
         /**
          * Telegram 撤回按钮
          */
-        error_log('Telegram Result: ' . Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/sendMessage?chat_id=" . CONFIG['admin']['chat_id'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
+        error_log('Telegram Result: ' . Method::curl("https://api.telegram.org/bot" . CONFIG['bot']['message'] . "/sendMessage?chat_id=" . CONFIG['admin']['send_to'] . "&reply_to_message_id={$data['message']['message_id']}&text=" . urlencode('☑消息已发送') . "&reply_markup=" . json_encode([
                 'inline_keyboard' => [[
                     [
                         'text' => '❌ReCall',
