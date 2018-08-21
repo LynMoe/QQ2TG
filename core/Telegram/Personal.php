@@ -34,7 +34,7 @@ class Personal
                 $param['image']['media'] = Storage::get_file_id($qq_file_id,$param['image']['media']);
 
                 $message = [
-                    'chat_id' => CONFIG['admin']['chat_id'],
+                    'chat_id' => CONFIG['admin']['send_to'],
                     'media' => $param['image'],
                 ];
 
@@ -66,7 +66,7 @@ class Personal
                 }
 
                 $message = [
-                    'chat_id' => CONFIG['admin']['chat_id'],
+                    'chat_id' => CONFIG['admin']['send_to'],
                     'media' => $param['image'],
                 ];
 
@@ -91,7 +91,7 @@ class Personal
             self::curl([
                 'api' => 'sendLocation',
                 'data' => [
-                    'chat_id' => CONFIG['admin']['chat_id'],
+                    'chat_id' => CONFIG['admin']['send_to'],
                     'latitude' => $param['location']['lat'],
                     'longitude' => $param['location']['lon'],
                 ],
@@ -104,7 +104,7 @@ class Personal
             self::curl([
                 'api' => 'sendMessage',
                 'data' => [
-                    'chat_id' => CONFIG['admin']['chat_id'],
+                    'chat_id' => CONFIG['admin']['send_to'],
                     'text' => $data['message'],
                     'parse_mode' => 'HTML',
                     'disable_web_page_preview' => false,
