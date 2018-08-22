@@ -275,6 +275,7 @@ switch ($data['message']['chat']['type'])
         }
         $tg_message_id = $data['message']['reply_to_message']['message_id'];
         $qq_user_id = Storage::get_qq_user_id($tg_message_id);
+        if ($qq_user_id <= 100000) die;
 
         /**
          * 将消息类型与内容转换为数组
@@ -283,7 +284,7 @@ switch ($data['message']['chat']['type'])
         if (isset($data['message']['caption'])) $message[] = ['type' => 'text','content' => $data['message']['caption'],];
         if (isset($data['message']['text'])) $message[] = ['type' => 'text','content' => $data['message']['text'],];
         if (isset($data['message']['sticker'])) $message[] = ['type' => 'photo','file_id' => $data['message']['sticker']['file_id'],'width' => $data['message']['sticker']['width'],];
-
+        if (isset($data['message']['location'])) $message[] = ['type' => 'location','lat' => $data['message']['location']['latitude'],'lon' => $data['message']['location']['longitude'],];
 
         /**
          * 性能检测
@@ -318,6 +319,9 @@ switch ($data['message']['chat']['type'])
                     break;
                 case 'text':
                     $send_message .= $item['content'];
+                    break;
+                case 'location':
+                    $send_message = "[CQ:location,lat={$item['lat']},lon={$item['lon']},style=1,title=Location]";
                     break;
             }
         }
