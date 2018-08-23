@@ -250,7 +250,9 @@ class Storage
     public static function get_qq_user_id($tg_message_id)
     {
         $db = new \Buki\Pdox(CONFIG['database']);
-        return $db->table('private_messages')->where('tg_message_id',$tg_message_id)->get()->user_id;
+        $result = $db->table('private_messages')->where('tg_message_id',$tg_message_id)->get();
+        if (is_null($result)) return -1;
+        return $result->user_id;
     }
 
     /**
