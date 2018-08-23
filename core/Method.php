@@ -258,6 +258,9 @@ class Method
                     $param['location']['lon'] = $cq_result['data']['lon'];
 
                     break;
+
+                case 'shake':
+                    $header = '戳了你一下';
             }
         }
 
