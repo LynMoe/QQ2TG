@@ -292,7 +292,7 @@ class Method
 
             $temp = explode('=',$value);
 
-            $result['data'][$temp[0]] = str_replace($temp[1] . '=','',$value);
+            $result['data'][$temp[0]] = str_replace($temp[0] . '=','',$value);
         }
 
         return $result;
