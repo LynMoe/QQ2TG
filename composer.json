@@ -1,6 +1,6 @@
 {
     "require": {
-        "izniburak/pdox": "^1.2",
+        "izniburak/pdox": "1.2",
         "magicalex/write-ini-file": "^1.2",
         "ext-json": "^1.6"
     }
